@@ -1,7 +1,14 @@
 import * as React from "react";
 import "./App.css";
 
+import ApolloClient from 'apollo-boost'
+
 import logo from "./logo.svg";
+
+const client = new ApolloClient({
+  uri: 'https://localhost/4000'
+});
+
 
 class App extends React.Component {
   public render() {
