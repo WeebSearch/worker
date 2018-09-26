@@ -112,8 +112,6 @@ def match_characters(inputs: List[Character],
         { 'aoba': (12245, 92) }
     """
 
-    logger.info(
-        f'Attempting to match {len(inputs)} inputs with {len(characters)} possible characters.')
 
     def calculate_fuzz(name: str, compare: str) -> int:
         """Case insensitive comparison"""
@@ -208,6 +206,12 @@ def match_characters(inputs: List[Character],
         coll[input_character.raw_name] = input_character
 
         return coll
+
+    logger.info(
+        f'Attempting to match {len(inputs)} inputs with {len(characters)} possible characters.')
+
+    if not characters:
+        return []
 
     results = reduce(transform, inputs, {})
 
