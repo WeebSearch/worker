@@ -125,7 +125,7 @@ async def process_file(file_path: Path, sess=None, link_url=None) -> Tuple[Optio
 
     dialogues = map(lambda i: i.dialogues, matched_characters)
 
-    all_dialogues = flatten(dialogues)
+    # all_dialogues = flatten(dialogues)
 
     sess.flush()
 
@@ -137,7 +137,7 @@ async def process_file(file_path: Path, sess=None, link_url=None) -> Tuple[Optio
     return episode, download
 
 
-async def process_archive(archive_path: Path, link_url: str):
+async def process_archive(archive_path: Path, link_url: str, delete=True):
     """
     Processes and entire archive containing subtitle files
 
@@ -148,10 +148,11 @@ async def process_archive(archive_path: Path, link_url: str):
             (normally resides in the downloads folder inside
             the project)
         link_url: Url that the archive was downloaded from
+        delete: Delete archive afterwards?
     """
     logging.info(f'Extracting archive from {archive_path.name}')
 
-    files = extract(archive_path)
+    files = extract(archive_path, delete=delete)
 
     sub_types = sort_by_sub_groups(files)
     archive_name = archive_path.name
@@ -186,14 +187,15 @@ async def process_archive(archive_path: Path, link_url: str):
     # processed
 
 
-async def process_download(download_location: Path, link_url: str):
+async def process_download(download_location: Path, link_url: str, delete=True):
     """
-    Processes the downloaded file, whether that is
-    an
+    Processes the downloaded file, whether that is an archive or a
+    file
     Args:
         download_location: Path to the downloaded media
         link_url: URL that the download came from
+        delete: Delete the original download?
     """
     if is_archive(download_location):
-        return await process_archive(download_location, link_url)
+        return await process_archive(download_location, link_url, delete)
     return await process_file(download_location, link_url=link_url)
