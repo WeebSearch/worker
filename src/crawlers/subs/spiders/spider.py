@@ -58,4 +58,4 @@ class SubsSpider(scrapy.Spider):
 
         self.logger.info(f'Extracted {len(download_links)} links from {response.url}')
 
-        future = asyncio.ensure_future(download_archives(download_links, session))
+        download_archives(download_links, session)

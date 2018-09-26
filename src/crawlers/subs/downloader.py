@@ -1,3 +1,4 @@
+import asyncio
 from pathlib import Path
 from typing import List
 from requests_futures.sessions import FuturesSession
@@ -17,7 +18,7 @@ def extract_download_name(url: str) -> str:
     return url_sections[-1]
 
 
-async def download_archives(urls: List[str], cookie: str) -> None:
+def download_archives(urls: List[str], cookie: str) -> None:
     """
     Downloads list of archives
     Important:
@@ -45,9 +46,10 @@ async def download_archives(urls: List[str], cookie: str) -> None:
         save_name = extract_download_name(response.url)
         save_location = Path('downloads').joinpath(save_name)
 
-        with open(save_location) as f:
+        with open(save_location, 'wb') as f:
             f.write(response.content)
             print(response)
-            await process_download(save_location)
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(process_download(save_location, response.url))
 
     logger.info(f'Finished writing files')
