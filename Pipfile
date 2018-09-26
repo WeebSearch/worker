@@ -1,0 +1,38 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[dev-packages]
+pylint = "*"
+"autopep8" = "*"
+pytest = "==3.7.4"
+pytest-ordering = "*"
+mypy = "*"
+rope = "*"
+
+[packages]
+# if you're on windows you'll need this to run scrapy
+# "pypiwin32" = "*"
+"pysubs2" = "==0.2.3"
+scrapy = "*"
+requests = "*"
+requests-futures = "*"
+rarfile = "*"
+sqlalchemy = "*"
+"psycopg2" = "*"
+alembic = "*"
+fuzzywuzzy = "*"
+python-dotenv = "*"
+twisted = "*"
+redis = "*"
+
+[requires]
+python_version = "3.6"
+
+[scripts]
+start   = "python src/index.py"
+lint    = "pycodestyle ."
+crawl   = "scrapy crawl subs"
+test    = "pytest"
+migrate = "alembic upgrade head"
