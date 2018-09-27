@@ -12,7 +12,7 @@ from ingest.subs import load_subs, parse_subtitles, sub_length
 from storage.database import session
 from storage.models.anime import Anime
 from storage.queries import anime_exists, find_episode
-from storage.models.downloads import Download
+from storage.models.file import Download
 from storage.models.episode import Episode
 from tools.utility import flatten
 

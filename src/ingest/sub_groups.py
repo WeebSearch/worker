@@ -28,7 +28,7 @@ GENERIC_SUBS_PATTERN = re.compile(GENERIC_SUB_REGEX)
 # This is going to be a whole bunch of hit and miss but
 # certain sub groups just don't have worthwhile data
 BLACKLISTED_GROUPS = [
-    'Doki'
+    # 'Doki'
 ]
 
 
