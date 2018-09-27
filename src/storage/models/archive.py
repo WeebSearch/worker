@@ -1,18 +1,15 @@
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
 
 from storage.database import Base
 
-from sqlalchemy import Column, String, DateTime, ForeignKey
+from sqlalchemy import Column, String, DateTime
 from sqlalchemy.sql import func
 
 
-class Download(Base):
-    __tablename__ = 'downloads'
+class Archive(Base):
+    __tablename__ = 'archives'
 
     id = Column(UUID(as_uuid=True), primary_key=True)
-
-    anime_id = Column(UUID(as_uuid=True), ForeignKey('animes.id', ondelete='CASCADE'))
 
     # nullable because not everything's download date
     # is known
@@ -21,7 +18,3 @@ class Download(Base):
     date = Column(DateTime, server_default=func.now())
 
     file_name = Column(String, nullable=False)
-
-    anime = relationship('Anime')
-
-    episodes = relationship('Episode', back_populates='download')

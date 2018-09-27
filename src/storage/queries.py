@@ -3,7 +3,7 @@ from storage.database import session
 from typing import Union
 
 from storage.models.anime import Anime
-from storage.models.downloads import Download
+from storage.models.file import Download
 from storage.models.episode import Episode
 
 import logging

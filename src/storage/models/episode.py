@@ -15,7 +15,7 @@ class Episode(Base):
     season_id = Column(UUID(as_uuid=True), ForeignKey('seasons.id'), nullable=True)
 
     # file download
-    download_id = Column(UUID(as_uuid=True), ForeignKey('downloads.id'), nullable=True)
+    file_id = Column(UUID(as_uuid=True), ForeignKey('files.id'), nullable=True)
 
     # episode numbers aren't always integers
     # Example: OVA, SP1 etc...

@@ -22,7 +22,7 @@ import storage.models.character
 import storage.models.season
 import storage.models.dialogue
 import storage.models.anime
-import storage.models.downloads
+import storage.models.file
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
