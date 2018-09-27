@@ -18,6 +18,14 @@ class SubsSpider(scrapy.Spider):
     name = "subs"
     logger = logging.getLogger(__name__)
 
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+        datefmt='%y-%m-%d %H:%M',
+        filename='log/spider-subs.com.ru.log',
+        filemode='a'
+    )
+
     # translation: href of all anchors whos href ends with 'dl'
     download_selector = 'a[href$="dl"]::attr(href)'
     download_prepend = 'http://subs.com.ru/'
