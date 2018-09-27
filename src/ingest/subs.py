@@ -143,7 +143,7 @@ def parse_subtitles(sub: pysubs2.SSAFile, episode_id: UUID, anime_id: UUID) -> L
         dialogue.start = line.start
         dialogue.end = line.end
         dialogue.anime_id = anime_id
-        dialogue.text = clean_text(line.text)
+        dialogue.text = line.plaintext
         dialogue.episode_id = episode_id
 
         characters[name].dialogues.append(dialogue)
