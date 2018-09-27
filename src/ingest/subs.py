@@ -112,7 +112,10 @@ def parse_subtitles(sub: pysubs2.SSAFile, episode_id: UUID, anime_id: UUID) -> L
 
     def parser(coll: ParsedSubs, line: pysubs2.SSAEvent) -> ParsedSubs:
 
-        if not line.text:
+        if not line.plaintext:
+            return coll
+
+        if line.is_comment:
             return coll
 
         current_dialogue, characters = coll
