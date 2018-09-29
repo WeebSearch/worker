@@ -35,4 +35,5 @@ class Episode(Base):
 
     season = relationship('Season', back_populates='episodes')
 
-    download = relationship('Download', back_populates='episodes')
+    file = relationship('File', back_populates='episode')
+

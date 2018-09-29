@@ -1,4 +1,5 @@
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 
 from storage.database import Base
 
@@ -18,3 +19,6 @@ class Archive(Base):
     date = Column(DateTime, server_default=func.now())
 
     file_name = Column(String, nullable=False)
+
+    files = relationship('File', back_populates='archive')
+

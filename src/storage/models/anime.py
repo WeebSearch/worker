@@ -49,8 +49,8 @@ class Anime(Base):
         single_parent=True
     )
 
-    downloads = relationship(
-        'Download',
+    files = relationship(
+        'File',
         back_populates='anime',
         cascade='all, delete-orphan',
         single_parent=True,

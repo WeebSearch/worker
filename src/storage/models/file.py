@@ -7,20 +7,24 @@ from sqlalchemy import Column, String, DateTime, ForeignKey
 from sqlalchemy.sql import func
 
 
-class Files(Base):
+class File(Base):
     __tablename__ = 'files'
 
     id = Column(UUID(as_uuid=True), primary_key=True)
 
     anime_id = Column(
-        UUID(
-            as_uuid=True), ForeignKey(
-            'animes.id', ondelete='CASCADE'))
+        UUID(as_uuid=True),
+        ForeignKey(
+            'animes.id', ondelete='CASCADE'
+        )
+    )
 
     archive_id = Column(
-        UUID(
-            as_uuid=True), ForeignKey(
-            'archives.id', ondelete='CASCADE'))
+        UUID(as_uuid=True),
+        ForeignKey(
+            'archives.id', ondelete='CASCADE'
+        )
+    )
 
     # nullable because not everything's download date
     # is known
@@ -32,6 +36,6 @@ class Files(Base):
 
     anime = relationship('Anime')
 
-    archive = relationship('Archive')
+    archive = relationship('Archive', back_populates='files')
 
-    episodes = relationship('Episode', back_populates='download')
+    episode = relationship('Episode', back_populates='file')
