@@ -9,17 +9,18 @@ from ingest.resolvers.anime_resolver import find_mal_id, find_anilist_id, is_val
 from ingest.resolvers.character_resolver import get_anime_characters, match_characters
 from ingest.sub_groups import sort_by_sub_groups
 from ingest.subs import load_subs, parse_subtitles, sub_length
-from storage.database import session
+from storage.database import session, Session
 from storage.models.anime import Anime
 from storage.queries import anime_exists, find_episode
-from storage.models.file import Download
+from storage.models.archive import Archive
+from storage.models.file import File
 from storage.models.episode import Episode
 from tools.utility import flatten
 
 logger = logging.getLogger(__name__)
 
 
-async def process_file(file_path: Path, sess=None, link_url=None) -> Tuple[Optional[Episode], Optional[Download]]:
+async def process_file(file_path: Path, sess=None, link_url=None) -> Tuple[Optional[Episode], Optional[File]]:
     """
     Processes a downloaded subtitle file
 
@@ -58,7 +59,7 @@ async def process_file(file_path: Path, sess=None, link_url=None) -> Tuple[Optio
     sub_group, anime_name, episode_num = extract_subtitle_info(file_path)
 
     # file download
-    download = Download()
+    download = File()
     download.id = uuid4()
     download.file_name = file_path.name
 
@@ -148,19 +149,20 @@ async def process_archive(archive_path: Path, link_url: str, delete=True):
             (normally resides in the downloads folder inside
             the project)
         link_url: Url that the archive was downloaded from
+        session: Session to use for committing to the db
         delete: Delete archive afterwards?
     """
     logging.info(f'Extracting archive from {archive_path.name}')
-
     files = extract(archive_path, delete=delete)
 
     sub_types = sort_by_sub_groups(files)
     archive_name = archive_path.name
 
-    download = Download()
-    download.id = uuid4()
-    download.link_url = link_url
-    download.file_name = archive_name
+    download = Archive(
+        id=uuid4(),
+        link_url=link_url,
+        file_name=archive_name
+    )
 
     for grouping in sub_types:
 
@@ -168,15 +170,22 @@ async def process_archive(archive_path: Path, link_url: str, delete=True):
             # empty group?
             continue
 
-        group, anime_name, _ = extract_subtitle_info(grouping[0])
+        try:
+            group, anime_name, _ = extract_subtitle_info(grouping[0])
 
-        logger.info(f'Processing sub group {group}')
+            logger.info(f'Processing sub group {group}')
 
-        for file in grouping:
-            logger.info(f'Processing file {file.name}')
-            await process_file(file, link_url=link_url)
+            for file in grouping:
+                logger.info(f'Processing file {file.name}')
+                await process_file(file, link_url=link_url)
 
+                session.commit()
+
+        except Exception as e:
+            logger.error(e)
             session.commit()
+            session.close()
+            return
 
     session.add(download)
     session.commit()
