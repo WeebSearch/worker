@@ -1,9 +1,7 @@
 from storage.database import session
 
 from typing import Union
-
-from storage.models.anime import Anime
-from storage.models.file import Download
+from storage.models.file import File
 from storage.models.episode import Episode
 
 import logging
@@ -25,9 +23,9 @@ def anime_exists(mal_id: Union[str, int]):
 
 
 def find_episode(file_name: str):
-    res = session.query(Download, Episode) \
+    res = session.query(File, Episode) \
         .filter(
-        Download.file_name == file_name
+        File.file_name == file_name
     ).first()
 
     if res is None:
