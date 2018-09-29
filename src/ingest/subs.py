@@ -1,13 +1,12 @@
-import logging
-
-from sqlalchemy.dialects.postgresql import UUID
-
 from ingest.sub_groups import GENERIC_SUBS_PATTERN
 from storage.database import session
 from storage.models.dialogue import Dialogue
 from storage.models.character import Character, anime_appearances
 from ingest.file.system import is_sub_file, extract_subtitle_info
 
+import logging
+from sqlalchemy.dialects.postgresql import UUID
+from math import floor
 import re
 import os
 from pathlib import Path
@@ -22,6 +21,83 @@ ParsedSubs = Tuple[int, Dict[str, Character]]
 
 # lazy matching control characters
 CONTROL_CHARACTER_REGEX = r'{\\.+?}'
+
+
+def is_text_usable(unfiltered: str, filtered: str) -> bool:
+    """
+    Sometimes subtitle files have really weird
+    control characters for stuff with no actual content.
+    They usually appear before a subtitle file for no reason.
+
+    for example:
+        {=15}{\alpha&H00&\t(8550,9550,\alpha&HFF&)\fs66...
+
+    When this percentage is big enough we consider that
+    subtitle line to be unusable and is generally not
+    even a part of the actual subtitles.
+
+    Sometimes formatting is used to give emphasis to a
+    specific word in a dialogue so we **don't** want to throw
+    those away.
+
+    Args:
+        unfiltered: raw subtitle text
+        filtered: subtitle text cleaned from control characters
+    Returns:
+        whether the text should be used or thrown away
+    """
+    f_length = len(filtered)
+    unf_length = len(unfiltered)
+
+    def limited_length():
+        matches = re.findall(CONTROL_CHARACTER_REGEX, unfiltered)
+
+        # control characters are generally used as
+        # "Yeah, I {\i1}am{\i0} taller!"
+        # none of those are longer than about 6 characters
+        return all(map(lambda match: len(match) < 6, matches))
+
+    checks = (
+        # probably not a real dialogue at this point
+        # you can't find that many chars on one scene
+        unf_length < 200,
+        not unfiltered.startswith('{='),
+        unf_length < floor(f_length * 1.6),
+        limited_length()
+    )
+
+    return all(checks)
+
+
+def is_valid_line(line: pysubs2.SSAEvent) -> bool:
+    """
+    Checking whether the line is suitable
+    to parse and commit to the database
+    Args:
+        line: pysubs2 line of a character
+    """
+
+    invalid_styles = [
+        'Sign',
+        'OP',
+        'ED'
+    ]
+
+    invalid_speakers = [
+        'on-screen'
+    ]
+
+    checks = (
+        not line.is_comment,
+        line.text,
+        line.plaintext,
+        line.name not in invalid_speakers,
+        all(map(lambda i: i.lower() not in line.style, invalid_styles)),
+        # at the end to allow short circuiting, it uses regex which is slow
+        is_text_usable(line.text, line.plaintext)
+    )
+
+    return all(checks)
 
 
 def sort_by_titles(paths: List[Path]) -> Mapping[str, List[Path]]:
@@ -76,16 +152,8 @@ def load_subs(path: Path) -> pysubs2.SSAFile:
     return pysubs2.load(destination)
 
 
-def extract_sub_name(path: Path) -> Optional[str]:
-    match = GENERIC_SUBS_PATTERN.match(path.name)
-
-    if match is None:
-        return
-
-    return match.group('name')
-
-
-def parse_subtitles(sub: pysubs2.SSAFile, episode_id: UUID, anime_id: UUID) -> List[Character]:
+def parse_subtitles(sub: pysubs2.SSAFile, episode_id: UUID,
+                    anime_id: UUID) -> List[Character]:
     """
     Parse the entire subtitle file, generating a mapping
     of character data to Character models
@@ -112,10 +180,7 @@ def parse_subtitles(sub: pysubs2.SSAFile, episode_id: UUID, anime_id: UUID) -> L
 
     def parser(coll: ParsedSubs, line: pysubs2.SSAEvent) -> ParsedSubs:
 
-        if not line.plaintext:
-            return coll
-
-        if line.is_comment:
+        if not is_valid_line(line):
             return coll
 
         current_dialogue, characters = coll
@@ -167,19 +232,6 @@ def parse_subtitles(sub: pysubs2.SSAFile, episode_id: UUID, anime_id: UUID) -> L
     logging.debug(f'Found {len(chars)} characters in {sub}')
 
     return chars
-
-
-def clean_text(text: str) -> str:
-    """
-    Cleaning the control characters
-    that are found in some of the subtitles
-    Args:
-        text: a line from a subtitle
-    Returns:
-        str - cleaned text
-    """
-    clean = re.sub(CONTROL_CHARACTER_REGEX, '', text)
-    return clean.replace('\\N', '')
 
 
 def sub_length(sub: pysubs2.SSAFile) -> int:
