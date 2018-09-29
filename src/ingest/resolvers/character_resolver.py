@@ -1,11 +1,11 @@
 import json
 import pickle
 from datetime import datetime
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Optional
 from fuzzywuzzy import fuzz
 import requests
 
-from ingest.resolvers import ANILIST_ENDPOINT
+from ingest.resolvers import ANILIST_ENDPOINT, is_request_successful
 from ingest.resolvers.anime_resolver import fetch_query, is_anilist_query_failed, RequestException
 from storage import CACHE_EXPIRE_TIME
 from storage.cache import cache
@@ -14,7 +14,7 @@ from storage.models.anime import Anime
 from storage.models.character import Character, anime_appearances
 from tools.protocols import AnilistCharacter
 from tools.utility import find_elem
-from functools import reduce
+from functools import reduce, partial
 import logging
 
 logger = logging.getLogger(__name__)
@@ -26,7 +26,7 @@ def extract_character_info(res: requests.Response):
     return res.json()['data']['Media']['characters']['nodes']
 
 
-async def get_anime_characters(mal_id: int, caching=True) -> List[AnilistCharacter]:
+async def get_anime_characters(mal_id: int, caching=True) -> Optional[List[AnilistCharacter]]:
     """
     Fetches the names of all the characters in an anime
     Args:
@@ -66,7 +66,13 @@ async def get_anime_characters(mal_id: int, caching=True) -> List[AnilistCharact
 
     start_date = datetime.now().replace(microsecond=0)
 
-    result = requests.post(ANILIST_ENDPOINT, json=data)
+    try:
+        result = requests.post(ANILIST_ENDPOINT, json=data)
+        result.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        logger.error(f'Something went wrong trying to fetch character data, status_code={result.status_code}')
+        logger.error(e)
+        return
 
     end_time = datetime.now().replace(microsecond=0)
 
@@ -112,7 +118,6 @@ def match_characters(inputs: List[Character],
         { 'aoba': (12245, 92) }
     """
 
-
     def calculate_fuzz(name: str, compare: str) -> int:
         """Case insensitive comparison"""
         if name is None:
@@ -123,15 +128,13 @@ def match_characters(inputs: List[Character],
 
         return fuzz.ratio(name, compare)
 
-    def best_match(
-            to_match: str, character: dict) -> Tuple[int, int]:
+    def best_match(to_match: str, character: dict) -> Tuple[int, int]:
+        match_names = partial(calculate_fuzz, compare=to_match)
+
         certainties = (
-            (character['id'], calculate_fuzz(
-                character['name']['first'], to_match)),
-            (character['id'], calculate_fuzz(
-                character['name']['last'], to_match)),
-            (character['id'], calculate_fuzz(
-                character['name']['native'], to_match)),
+            (character['id'], match_names(character['name']['first'])),
+            (character['id'], match_names(character['name']['last'])),
+            (character['id'], match_names(character['name']['native']))
         )
 
         # max of best matching name
