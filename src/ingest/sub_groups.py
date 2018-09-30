@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 # $ <name>      - Nicely formatted anime name
 # $ <episode>   - Episode number
 
-GENERIC_SUB_REGEX = r'\[(?P<sub_group>.+)\] (?P<name>.+) - (?P<episode>.+) [\[(]'
+GENERIC_SUB_REGEX = r'\[(?P<sub_group>.+)\] (?P<name>.+) - (?P<episode>.+?) [\[(]'
 GENERIC_SUBS_PATTERN = re.compile(GENERIC_SUB_REGEX)
 
 # This is going to be a whole bunch of hit and miss but
@@ -43,7 +43,7 @@ def is_valid_subtitle(file: Path) -> bool:
 
     result = group not in BLACKLISTED_GROUPS
 
-    logger.debug(f'{file.name} is valid = {result}')
+    logger.debug(f'{file.name} is {"valid" if result else "invalid"}')
 
     return result
 
