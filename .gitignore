@@ -1,3 +1,12 @@
+# api
+dist
+package-lock.json
+node_modules
+.idea
+.vscode
+*.log
+.env*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 downloads/

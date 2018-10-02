@@ -1,0 +1,23 @@
+{
+	"defaultSeverity": "error",
+	"extends": [
+		"tslint:latest",
+		"tslint-config-prettier"
+	],
+	"linterOptions": {
+		"exclude": [
+			"src/generated/prisma.ts",
+			"node_modules"
+		]
+	},
+	"rules": {
+		"indent": [true, "spaces", 4],
+		"no-constant-condition": true,
+		"no-console": false,
+		"interface-name": [true, "never-prefix"],
+		"object-literal-sort-keys": false
+	},
+	"rulesDirectory": [
+		"node_modules/tslint-eslint-rules/dist/rules"
+	]
+}

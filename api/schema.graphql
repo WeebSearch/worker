@@ -1,0 +1,31 @@
+# import User from "generated/prisma.graphql"
+
+type LoginCredentials {
+    email: String!
+    password: String!
+}
+
+type AuthResponse {
+    token: String
+    expiration: Int
+    email: String
+    name: String
+}
+
+fragment LoginCredentials on User {
+    email
+    password
+}
+
+# type SignupCredentials {
+# 	...LoginCredentials
+# 	name: String
+# }
+
+type Query {
+    auth(email: String!, password: String!): AuthResponse
+}
+
+type Mutation {
+    signup(email: String!, password: String!, name: String!): AuthResponse
+}

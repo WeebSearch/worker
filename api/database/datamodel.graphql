@@ -1,0 +1,90 @@
+type User {
+  ## Input
+  name: String!
+  email: String! @unique
+  anilistName: String
+  malName: String
+
+  ## Generated
+  id: ID! @unique
+  hash: String!
+  salt: String!
+}
+
+type Anime {
+  id: ID! @unique
+  anilistId: Int
+  malId: Int
+  rawName: String!
+  name: String
+  thumbnailUrl: String
+  characters: [Character!]!
+  episodes: [Episode!]!
+  dialogues: [Dialogue!]!
+  seasons: [Season!]!
+  files: [File!]!
+}
+
+type Archive {
+  id: ID! @unique
+  linkUrl: String
+  fileName: String!
+  files: [File!]!
+}
+
+type Character {
+  id: ID! @unique
+  anilistId: Int @unique
+  rawName: String!
+  name: String
+  certainty: Int
+  thumbnailUrl: String
+  animes: [Anime!]!
+  episodes: [Episode!]!
+  seasons: [Season!]!
+  dialogues: [Dialogue!]!
+}
+
+type Dialogue {
+  id: ID! @unique
+  order: Int!
+  # must have a character, __UNKNOWN__ if not defined
+  character: Character!
+  episode: Episode!
+  season: Season
+  anime: Anime!
+  start: Int!
+  end: Int!
+  text: String!
+}
+
+type Episode {
+  id: ID! @unique
+  anime: Anime!
+  season: Season
+  file: File! @unique
+  # not always parsed as numbers
+  episodeNumber: String
+  length: Int!
+  subGroup: String! @default(value: "__UNKNOWN__")
+  language: String! @default(value: "EN")
+  characters: [Character!]!
+  dialogues: [Dialogue!]!
+}
+
+type File {
+  id: ID! @unique
+  anime: Anime!
+  archive: Archive
+  linkUrl: String
+  fileName: String!
+  episode: Episode!
+}
+
+type Season {
+  id: ID! @unique
+  anime: Anime!
+  archive: Archive
+  dialogues: [Dialogue!]!
+  # I don't know how I feel about this one yet
+}

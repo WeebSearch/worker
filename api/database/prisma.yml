@@ -1,0 +1,8 @@
+datamodel:
+  - datamodel.graphql
+  # - datamodel-1537873408939.graphql
+endpoint: "http://localhost:4466"
+hooks:
+  post-deploy:
+    - "graphql get-schema --project database"
+    - "graphql codegen"
