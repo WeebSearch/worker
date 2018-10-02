@@ -1,7 +1,7 @@
 from ingest.sub_groups import GENERIC_SUBS_PATTERN
 from api.database import session
 from api.schema.dialogue import Dialogue
-from api.schema.character import Character, anime_appearances
+from api.schema.character import Character
 from ingest.file.system import is_sub_file, extract_subtitle_info
 
 import logging
@@ -188,10 +188,7 @@ def parse_subtitles(sub: pysubs2.SSAFile, episode_id: UUID,
         name = line.name if line.name else '__UNKNOWN__'
 
         if name not in characters:
-            result = session.query(Character, anime_appearances) \
-                .filter(
-                Character.raw_name == name and anime_appearances.anime_id == anime_id
-            ).first()
+            result = []
 
             if result:
                 character = result[0]

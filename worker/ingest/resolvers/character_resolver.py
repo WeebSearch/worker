@@ -12,7 +12,7 @@ from api import CACHE_EXPIRE_TIME
 from api.cache import cache
 from api.database import session
 from api.schema.anime import Anime
-from api.schema.character import Character, anime_appearances
+from api.schema.character import Character
 from tools.protocols import AnilistCharacter
 from tools.utility import find_elem
 from functools import reduce, partial

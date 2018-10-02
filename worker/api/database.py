@@ -9,6 +9,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+DATABASE_URL = os.getenv('PRISMA_ENDPOINT', 'http://localhost:4466')
 
 if not DATABASE_URL:
     logger.error('DATABASE_URL was not found ')
@@ -23,17 +24,6 @@ def query(query_body: str, variables: dict) -> requests.Response:
     data = json.dumps(data)
     return requests.post(DATABASE_URL, json=data)
 
+session = None
 
-Base = declarative_base()
 
-url = 'postgresql://python-ingest-worker:test@/anime_index'
-
-engine = create_engine(url)
-Session = sessionmaker(bind=engine)
-
-Base.metadata.bind = engine
-Base.metadata.create_all(engine)
-
-conn = engine.connect()
-
-session = Session(bind=conn, autoflush=False, autocommit=False)

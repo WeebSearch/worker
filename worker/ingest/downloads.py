@@ -9,7 +9,7 @@ from ingest.resolvers.anime_resolver import find_mal_id, find_anilist_id, is_val
 from ingest.resolvers.character_resolver import get_anime_characters, match_characters
 from ingest.sub_groups import sort_by_sub_groups
 from ingest.subs import load_subs, parse_subtitles, sub_length
-from api.database import session, Session
+from api.database import session
 from api.schema.anime import Anime
 from api.queries import anime_exists, find_episode
 from api.schema.archive import Archive
@@ -94,8 +94,9 @@ async def process_file(file_path: Path, sess=None, link_url=None) -> Tuple[Optio
         sess.add(anime)
 
     else:
-        anime = session.query(Anime) \
-            .filter(Anime.mal_id == mal_id).first()
+        # anime = session.query(Anime) \
+        #     .filter(Anime.mal_id == mal_id).first()
+        anime = None
 
     sess.flush()
 

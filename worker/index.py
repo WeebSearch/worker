@@ -1,3 +1,7 @@
+import dotenv
+
+dotenv.load_dotenv()
+
 import asyncio
 
 import logging
@@ -20,6 +24,7 @@ async def main():
     query = {
 
     }
+    print('working')
     # download = Path(
     #     'downloads/New_Game_TV_2016_Eng/[Doki] New Game! - 09 (1280x720 h264 AAC) [1306CED6].ass')
     # for i in load_subs(download):

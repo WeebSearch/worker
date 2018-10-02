@@ -6,4 +6,4 @@ install:
   - pip install pipenv
   - pipenv install --system
 script:
-  - python src/index.py
+  - python worker/index.py
