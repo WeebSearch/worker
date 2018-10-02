@@ -5,8 +5,8 @@ from requests_futures.sessions import FuturesSession
 import os
 import logging
 
-from src.crawlers.subs.settings import USER_AGENT
-from src.ingest.downloads import process_download
+from worker.crawlers.subs.settings import USER_AGENT
+from worker.ingest.downloads import process_download
 
 logger = logging.getLogger(__name__)
 

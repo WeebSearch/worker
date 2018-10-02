@@ -3,7 +3,7 @@ import logging
 import scrapy
 # No idea why we have to import this from src but not for
 # the other imports in the same project... goddamn python
-from src.crawlers.subs.downloader import download_archives
+from worker.crawlers.subs.downloader import download_archives
 
 
 class SubsSpider(scrapy.Spider):
@@ -22,7 +22,7 @@ class SubsSpider(scrapy.Spider):
         level=logging.DEBUG,
         format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
         datefmt='%y-%m-%d %H:%M',
-        filename='log/spider-subs.com.ru.log',
+        filename='log/worker/spider-subs.com.ru.log',
         filemode='a'
     )
 
