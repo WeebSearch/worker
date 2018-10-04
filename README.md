@@ -40,10 +40,13 @@ them? Stop asking so many questions.
 
 - Requests are checked and cached on Redis for each query
 
+## Todo and Planned Features
 
-#### Todo and Planned Features
+### Workers (Python)
 
-- [ ] Support multiple sub groups
+- [x] Support multiple sub groups
+
+- [ ] Switch to non-blocking co-routines
 
 - [ ] Support multiple file types **(rar, zip, 7z, tar.gz)**
 
@@ -51,21 +54,47 @@ them? Stop asking so many questions.
 
 - [ ] Add more sub websites to crawl
 
-- [ ] Make a website with React
 
-- [ ] Integrate Hifumi's API or start the API from scratch with Prisma
+### Backend (Typescript)
 
-- [ ] User authentication, JWT?
+- [x] ~~Integrate Hifumi's API~~ or start the API from scratch with Prisma
 
+- [x] User authentication, JWT?
 
-#### Stack
+- [x] Internal Graphql to expose ORM features to the workers
+
+- [ ] Solr integration for indexing dialogues
+
+- [ ] Redis integration for caching user queries
+
+### Frontend (React & TS)
+
+- [ ] Start a website with React
+
+- [ ] Create a web-based transcript editor to fix parsing mistakes or add new information
+    
+    - Available to users designated as data mods
+    
+    - Supports:
+    
+        - Marking lines with the correct speakers [color coded]
+        
+        - Editing existing character information
+        
+        - Editing episode and character metadata 
+        
+        - Deleting unnecessary dialogues and characters (which there are a lot of)
+        
+        - Merging animes, dialogues, characters and more
+
 
 <div align="center">
+    <img src="http://www.typescriptlang.org/assets/images/icons/apple-touch-icon-180x180.png" height="64">
     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/2000px-Python-logo-notext.svg.png" height="64">
     <img src="https://redislabs.com/wp-content/themes/redislabs/assets/images/redis-logo-stack.png" height="64">
     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/GraphQL_Logo.svg/2000px-GraphQL_Logo.svg.png" height="64">
     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" height="64">
-    <img src="https://ria.gallerycdn.vsassets.io/extensions/ria/elastic/0.13.3/1530754501320/Microsoft.VisualStudio.Services.Icons.Default" height="64">
+    <img src="https://burner.bonanza.com/background_masks/100887573.png?composite=true&transparent=true" height="64">
 </div>
 
 
@@ -89,6 +118,7 @@ them? Stop asking so many questions.
 
 - `pipenv run test` runs pytest against the tests files
   - Remember to include tests for new changes
+
   
 <hr>
 
