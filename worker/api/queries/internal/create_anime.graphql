@@ -1,0 +1,17 @@
+mutation(
+  $rawName: String!
+  $anilistId: Int
+  $name: String
+  $thumbnailUrl: String
+) {
+  createAnime(
+    data: {
+      rawName: $rawName
+      anilistId: $anilistId
+      name: $name
+      thumbnailUrl: $thumbnailUrl
+    }
+  ) {
+    id
+  }
+}

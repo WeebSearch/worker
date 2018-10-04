@@ -1,0 +1,29 @@
+mutation(
+  $rawName: String!
+  $name: String!
+  $certainty: Int
+  $characterId: ID
+  $thumbnailUrl: String
+  $animeId: ID!
+  $anilistId: Int
+  $episodeId: ID!
+  $dialogues: [DialogueCreateWithoutCharacterInput!]
+) {
+  upsertCharacter(
+    where: { id: $characterId }
+    update: { dialogues: { create: $dialogues } }
+    create: {
+      animes: { connect: [{ id: $animeId }] }
+      episodes: { connect: [{ id: $episodeId }] }
+      rawName: $rawName
+      name: $name
+      anilistId: $anilistId
+      dialogues: { create: $dialogues }
+      certainty: $certainty
+      thumbnailUrl: $thumbnailUrl
+    }
+  ) {
+    id
+  }
+}
+
