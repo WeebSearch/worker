@@ -23,6 +23,7 @@ fuzzywuzzy = "*"
 python-dotenv = "*"
 twisted = "*"
 redis = "*"
+aiohttp = "*"
 
 [requires]
 python_version = "3.6"

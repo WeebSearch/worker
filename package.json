@@ -1,9 +1,9 @@
 {
 	"name": "weebsearchapi",
 	"scripts": {
-		"start": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
+		"start": "dotenv -- nodemon -e ts,graphql -x ts-node api/index.ts",
 		"dev": "npm-run-all --parallel start playground",
-		"debug": "dotenv -- nodemon -e ts,graphql -x ts-node --inspect src/index.ts",
+		"debug": "dotenv -- nodemon -e ts,graphql -x ts-node --inspect api/index.ts",
 		"playground": "graphql playground",
 		"build": "rimraf dist && tsc",
 		"tslint-check": "tslint-config-prettier-check ./tslint.json"
