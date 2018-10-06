@@ -1,3 +1,4 @@
+from api.queries import find_character
 from ingest.sub_groups import GENERIC_SUBS_PATTERN
 from api.database import session
 from api.schema.dialogue import Dialogue
@@ -152,8 +153,8 @@ def load_subs(path: Path) -> pysubs2.SSAFile:
     return pysubs2.load(destination)
 
 
-def parse_subtitles(sub: pysubs2.SSAFile, episode_id: UUID,
-                    anime_id: UUID) -> List[Character]:
+async def parse_subtitles(sub: pysubs2.SSAFile, episode_id: str,
+                          anime_id: str, anime_name: str) -> List[Character]:
     """
     Parse the entire subtitle file, generating a mapping
     of character data to Character models
@@ -178,7 +179,7 @@ def parse_subtitles(sub: pysubs2.SSAFile, episode_id: UUID,
         2) Dialogues in chronological order
     """
 
-    def parser(coll: ParsedSubs, line: pysubs2.SSAEvent) -> ParsedSubs:
+    async def parser(coll: ParsedSubs, line: pysubs2.SSAEvent) -> ParsedSubs:
 
         if not is_valid_line(line):
             return coll
@@ -188,23 +189,23 @@ def parse_subtitles(sub: pysubs2.SSAFile, episode_id: UUID,
         name = line.name if line.name else '__UNKNOWN__'
 
         if name not in characters:
-            result = []
+            result = await find_character(anime_name, name)
+
+            character = Character()
 
             if result:
-                character = result[0]
-                characters[name] = character
-            else:
-                character = Character()
-                character.raw_name = name
-                character.id = uuid4()
-                characters[name] = character
+                character.id = result
+
+            character.rawName = name
+            character.dialogues = []
+            character.animeId = anime_id
+            character.episodeId = episode_id
+            characters[name] = character
 
         dialogue = Dialogue()
 
-        dialogue.id = uuid4()
         dialogue.order = current_dialogue
 
-        dialogue.character_id = characters[name]
         dialogue.start = line.start
         dialogue.end = line.end
         dialogue.anime_id = anime_id
@@ -219,12 +220,15 @@ def parse_subtitles(sub: pysubs2.SSAFile, episode_id: UUID,
 
     logging.info(f'Parsing subtitles for {sub}')
 
-    initial = (0, {})
+    line_count = 0
+    collector = {}
 
     # TODO: this is pretty disgusting, change it
-    _, out = reduce(parser, sub, initial)
 
-    chars = list(out.values())
+    for line in sub:
+        line_count, collector = await parser((line_count, collector), line)
+
+    chars = list(collector.values())
 
     logging.debug(f'Found {len(chars)} characters in {sub}')
 

@@ -2,12 +2,13 @@ import json
 import pickle
 from datetime import datetime
 from typing import List, Dict, Tuple, Optional
+
+import aiohttp
 from fuzzywuzzy import fuzz
-import requests
 
 from ingest.resolvers import ANILIST_ENDPOINT, is_request_successful
 from ingest.resolvers.anime_resolver import is_anilist_query_failed, RequestException
-from api.queries import fetch_query
+from api.queries import fetch_query, find_character, external
 from api import CACHE_EXPIRE_TIME
 from api.cache import cache
 from api.database import session
@@ -21,10 +22,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def extract_character_info(res: requests.Response):
-    if is_anilist_query_failed(res):
-        raise RequestException(res.json()['errors'])
-    return res.json()['data']['Media']['characters']['nodes']
+async def extract_character_info(res: aiohttp.ClientResponse):
+    data = await res.json()
+    if is_anilist_query_failed(data):
+        raise RequestException(data['errors'])
+    return data['data']['Media']['characters']['nodes']
 
 
 async def get_anime_characters(mal_id: int, caching=True) -> Optional[List[AnilistCharacter]]:
@@ -46,10 +48,11 @@ async def get_anime_characters(mal_id: int, caching=True) -> Optional[List[Anili
         }]
     """
 
-    query = fetch_query('fetch_characters')
+    query = fetch_query('external', 'fetch_characters')
 
     logger.info(
         f'Attempting to fetch character information for anime {mal_id}')
+    # use query() here
     data = {
         'query': query,
         'variables': {
@@ -68,9 +71,9 @@ async def get_anime_characters(mal_id: int, caching=True) -> Optional[List[Anili
     start_date = datetime.now().replace(microsecond=0)
 
     try:
-        result = requests.post(ANILIST_ENDPOINT, json=data)
+        result = await external.post(ANILIST_ENDPOINT, json=data)
         result.raise_for_status()
-    except requests.exceptions.RequestException as e:
+    except aiohttp.client_exceptions.ClientError as e:
         logger.error(f'Something went wrong trying to fetch character data, status_code={result.status_code}')
         logger.error(e)
         return
@@ -79,7 +82,7 @@ async def get_anime_characters(mal_id: int, caching=True) -> Optional[List[Anili
 
     logger.info(f'Got response from AniList in {end_time - start_date}')
 
-    characters = extract_character_info(result)
+    characters = await extract_character_info(result)
 
     if caching:
         serialized = pickle.dumps(characters)
@@ -92,10 +95,9 @@ async def get_anime_characters(mal_id: int, caching=True) -> Optional[List[Anili
     return characters
 
 
-def match_characters(inputs: List[Character],
-                     characters: List[AnilistCharacter],
-                     anime: Anime
-                     ) -> List[Character]:
+async def match_characters(inputs: List[Character],
+                           characters: List[AnilistCharacter],
+                           anime_raw_name: str) -> List[Character]:
     """
     Matches a list of given strings with a list of
     other possibilities based on fuzz
@@ -141,35 +143,23 @@ def match_characters(inputs: List[Character],
         # max of best matching name
         return max(certainties, key=lambda k: k[1])
 
-    def transform(coll: dict,
-                  input_character: Character
-                  ) -> Dict[str, Character]:
+    async def transform(coll: dict, input_character: Character) -> Dict[str, Character]:
         # character already exists if it has the same
         # raw name and anime id as another character
-        result = session \
-            .query(Character, anime_appearances) \
-            .filter(
-                # note: sometimes because sqlalchemy is totally amazing we
-                # end up finding the same row we're already working with
-                # so we have to make sure it's not the same id
-                Character.raw_name == input_character.raw_name
-                and anime_appearances.anime_id == anime.id
-            ).first()
+        result = await find_character(anime_raw_name, input_character.rawName)
 
         # no need to match characters if the anilist id is already
         # present in the database
 
-        if result and result[0].id != input_character.id:
-            existing, _, _ = result
-            # only updating dialogues in this case
-            existing.dialogues += input_character.dialogues
-            # coll[input_character.raw_name] = existing
-            # session.expire(input_character)
-            session.commit()
+        if result and input_character.id and input_character.id != result:
+            # a character with an id is upserted instead, upserted
+            # characters only get their dialogue relations modified
+            coll[input_character.rawName].id = result
+            coll[input_character.rawName].dialogues += input_character.dialogues
             return coll
 
         names = map(
-            lambda char: best_match(input_character.raw_name, char),
+            lambda d: best_match(input_character.rawName, d),
             characters
         )
 
@@ -179,7 +169,7 @@ def match_characters(inputs: List[Character],
 
         if certainty < 60:
             # cutoff point
-            coll[input_character.raw_name] = input_character
+            coll[input_character.rawName] = input_character
             return coll
 
         matching_object = find_elem(
@@ -187,7 +177,7 @@ def match_characters(inputs: List[Character],
         )
 
         if not matching_object:
-            coll[input_character.raw_name] = input_character
+            coll[input_character.rawName] = input_character
             return coll
 
         # characters with unknown names have None type which is
@@ -203,11 +193,11 @@ def match_characters(inputs: List[Character],
 
         input_character.name = name
         input_character.certainty = certainty
-        input_character.anilist_id = anilist_id
+        input_character.anilistId = anilist_id
 
         # using raw_name because parsed name might overlap
         # with characters that get matched against the same thing
-        coll[input_character.raw_name] = input_character
+        coll[input_character.rawName] = input_character
 
         return coll
 
@@ -217,7 +207,10 @@ def match_characters(inputs: List[Character],
     if not characters:
         return []
 
-    results = reduce(transform, inputs, {})
+    results = {}
+    for char in inputs:
+        # can't pass a coroutine into reduce unfortunately
+        results = await transform(results, char)
 
     to_list = list(results.values())
 

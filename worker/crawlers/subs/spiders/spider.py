@@ -54,8 +54,8 @@ class SubsSpider(scrapy.Spider):
             and as a cron job by checking against links that are
             already downloaded from previous crawls in the database
 
-            while un-downloaded subs == 30; next page
-            else; next page, if not un-downloaded subs; return
+            while un-downloaded subs == 30 next page
+            else next page, if not un-downloaded subs return
         """
         self.logger.info(f'Parsing {response.url}')
 

@@ -5,6 +5,6 @@ class Dialogue:
     text: str
 
     episode_id: str
-    animes_id: str
+    anime_id: str
 
 

@@ -1,49 +1,156 @@
-from api.database import session
-
-from typing import Union
-from api.schema.file import File
-from api.schema.episode import Episode
-
+import asyncio
+import json
 import logging
+import os
+from functools import reduce
+from typing import Union, Optional
+
+import aiohttp
+
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
+internal = aiohttp.ClientSession()
+external = aiohttp.ClientSession()
 
-def anime_exists(mal_id: Union[str, int]):
-    from api.schema.anime import Anime
+DATABASE_DEFAULT_URL = 'http://localhost:4466'
+DATABASE_URL = os.getenv('PRISMA_ENDPOINT', DATABASE_DEFAULT_URL)
 
-    result = session.query(Anime) \
-        .filter(Anime.mal_id == mal_id) \
-        .first()
-
-    is_found = result is not None
-    logger.debug(f'{mal_id} found in the database: {is_found}')
-
-    return is_found
+if not DATABASE_URL:
+    logger.error(
+        f'DATABASE_URL was not found, defaulting to {DATABASE_DEFAULT_URL}')
 
 
-def find_episode(file_name: str):
-    res = session.query(File, Episode) \
-        .filter(
-        File.file_name == file_name
-    ).first()
+def extract(response_dict: dict, *path):
+    try:
+        return reduce(lambda d, key: d[key], path, response_dict)
+    except (KeyError, TypeError) as e:
+        logger.error(f'Unexpected dictionary structure while traversing for "{path}"')
+        logger.debug(f'Traversed dict: {response_dict}')
+        return None
 
-    if res is None:
-        logging.debug(f'Episode {file_name} was not found in the db.')
+
+async def query(query_body: str, variables: dict) -> aiohttp.ClientResponse:
+    start = datetime.now()
+
+    data = {
+        'query': query_body,
+        'variables': variables
+    }
+    headers = {
+        'Content-Type': 'application/json'
+    }
+
+    async with aiohttp.ClientSession() as sess:
+        await asyncio.sleep(0.1)
+        out = await sess.post(DATABASE_URL, json=data, headers=headers)
+
+        end = datetime.now()
+        logger.debug(f'Got response from database in {(end - start).microseconds}ms')
+
+        return out
+
+
+async def find_anime(raw_name: str) -> Optional[str]:
+    logger.debug(f'Finding anime with name {raw_name}')
+    q = fetch_query('internal', 'find_anime')
+
+    result = await query(q, {
+        'rawName': raw_name
+    })
+
+
+    if result is None:
         return
 
-    _, episode = res
-
-    return episode
+    return extract(await result.json(), 'data', 'anime', 'id')
 
 
-def find_character(anilist_id: Union[str, int]):
-    from api.schema.character import Character
-    return session.query(Character) \
-        .filter(Character.anilist_id == anilist_id) \
-        .first()
+async def anime_exists(raw_name: str) -> bool:
+    return bool(find_anime(raw_name))
 
 
-def fetch_query(file_name: str) -> str:
-    with open(f'src/storage/queries/{file_name}.graphql', 'r') as f:
+async def find_file(file_name: str) -> Optional[str]:
+    """
+    Finds the id of a file if a matching one is found
+    Args:
+        file_name:
+
+    Returns:
+
+    """
+    q = fetch_query('internal', 'find_file')
+
+    result = await query(q, {
+        'fileName': file_name
+    })
+
+    if result is None:
+        return
+
+    files = extract(await result.json(), 'data', 'files')
+
+    if not files:
+        return
+
+    if len(files) > 1:
+        logger.warning(f'Found more than one entry for file with name "{file_name}"')
+        logger.debug([file['id'] for file in files])
+
+    return extract(files.pop(), 'id')
+
+
+async def file_exists(file_name: str) -> bool:
+    return bool(find_file(file_name))
+
+
+async def find_character(anime_name: str, character_name: str) -> Optional[int]:
+    logger.debug(f'Searching for character {character_name} in the database')
+    q = fetch_query('internal', 'find_character.name')
+
+    result = await query(q, {
+        'animeRawName': anime_name,
+        'characterRawName': character_name
+    })
+
+    if result is None:
+        return
+
+    collection: Optional[list] = extract(await result.json(), 'data', 'characters')
+
+    if len(collection) > 1:
+        logger.warning(
+            f'Found duplicate entries for character {character_name} in anime {anime_name}.')
+        logger.debug(collection)
+
+    if not collection:
+        return
+
+    # collection always has an id
+    return collection.pop(0)['id']
+
+
+async def find_archive(raw_name: str):
+    q = fetch_query('internal', 'find_archive')
+
+    response = await query(q, {
+        'fileName': raw_name
+    })
+
+    arr: Optional[list] = extract(await response.json(), 'data', 'archives')
+
+    if not arr:
+        return
+
+    if len(arr) > 1:
+        logger.warning(
+            f'Found duplicate entries for character {character_name} in anime {anime_name}.')
+        logger.debug(arr)
+
+    return arr.pop(0)['id']
+
+
+def fetch_query(folder: str, file_name: str) -> str:
+    with open(f'worker/api/queries/{folder}/{file_name}.graphql', 'r') as f:
         return f.read()

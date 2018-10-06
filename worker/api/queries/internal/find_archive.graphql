@@ -1,0 +1,7 @@
+query($fileName: String!) {
+  archives(where: {
+    fileName: $fileName
+  }) {
+   id
+  }
+}

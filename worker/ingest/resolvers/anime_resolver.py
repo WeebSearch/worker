@@ -1,12 +1,13 @@
+import asyncio
 import logging
 
 from ingest.resolvers import MAL_HINT_ENDPOINT, ANILIST_ENDPOINT
 from api import CACHE_EXPIRE_TIME
 from api.cache import cache
-from api.queries import fetch_query
+from api.queries import fetch_query, external, query
 from tools.utility import find_elem
 
-import requests
+import aiohttp
 import pickle
 from typing import Tuple
 from fuzzywuzzy import fuzz
@@ -29,9 +30,9 @@ def is_valid_anime(certainty: int) -> bool:
     return certainty > 80
 
 
-def is_anilist_query_failed(response: requests.Response) -> bool:
+def is_anilist_query_failed(response: dict) -> bool:
     """Generic anilist query error checker"""
-    return 'errors' in response.json()
+    return 'errors' in response
 
 
 async def find_mal_id(name: str, caching=True) -> Tuple[int, int]:
@@ -61,6 +62,8 @@ async def find_mal_id(name: str, caching=True) -> Tuple[int, int]:
 
     logger.info(f'Searching for the mal id of {name}...')
 
+    await asyncio.sleep(0.1)
+
     if caching:
         cache_query = f'queries:mal_id:{endpoint}'
         cached_result = cache.get(cache_query)
@@ -68,46 +71,47 @@ async def find_mal_id(name: str, caching=True) -> Tuple[int, int]:
             logger.debug(f'Cache hit on mal id request for {name}.')
             return pickle.loads(cached_result)
 
-    result = requests.get(endpoint)
-    data: dict = result.json()
+    async with aiohttp.ClientSession() as session:
+        result = await session.get(endpoint)
+        data: dict = await result.json()
 
-    category = find_elem(
-        data['categories'],
-        lambda cat: cat['type'] == 'anime')
+        category = find_elem(
+            data['categories'],
+            lambda cat: cat['type'] == 'anime')
 
-    if category is None:
-        logger.info('Could not get a proper response from MAL')
-        raise RequestException('anime_resolver')
+        if category is None:
+            logger.info('Could not get a proper response from MAL')
+            raise RequestException('anime_resolver')
 
-    items = category['items']
-    names = [
-        anime['name'] for anime in items
-    ]
-    scores = [
-        (anime_name, fuzz.ratio(name, anime_name)) for anime_name in names
-    ]
+        items = category['items']
+        names = [
+            anime['name'] for anime in items
+        ]
+        scores = [
+            (anime_name, fuzz.ratio(name, anime_name)) for anime_name in names
+        ]
 
-    # k[1] is the fuzz ratio
-    best_match, confidence = max(scores, key=lambda k: k[1])
-    final_result = find_elem(items, lambda item: item['name'] == best_match)
+        # k[1] is the fuzz ratio
+        best_match, confidence = max(scores, key=lambda k: k[1])
+        final_result = find_elem(items, lambda item: item['name'] == best_match)
 
-    if final_result is None:
-        raise RequestException('anime_resolver')
+        if final_result is None:
+            raise RequestException('anime_resolver')
 
-    out = int(final_result['id']), confidence
+        out = int(final_result['id']), confidence
 
-    if caching:
-        serialized = pickle.dumps(out)
-        cache.set(cache_query, serialized, ex=CACHE_EXPIRE_TIME)
+        if caching:
+            serialized = pickle.dumps(out)
+            cache.set(cache_query, serialized, ex=CACHE_EXPIRE_TIME)
 
-    return out
+        return out
 
 
-def fetch_anilist_id(response: requests.Response) -> int:
+async def fetch_anilist_id(response: aiohttp.ClientResponse) -> int:
     """Extracts id from an Anilist response"""
-    payload = response.json()
+    payload = await response.json()
 
-    if is_anilist_query_failed(response):
+    if is_anilist_query_failed(payload):
         exception = payload['errors']['message']
         raise RequestException(exception)
 
@@ -126,7 +130,7 @@ async def find_anilist_id(mal_id) -> int:
     Raises:
         RequestException - invalid mal id
     """
-    query = fetch_query('fetch_id')
+    query = fetch_query('external', 'fetch_id')
 
     data = {
         'query': query,
@@ -135,6 +139,6 @@ async def find_anilist_id(mal_id) -> int:
         }
     }
 
-    response = requests.post(ANILIST_ENDPOINT, json=data)
+    response = await external.post(ANILIST_ENDPOINT, json=data)
 
-    return fetch_anilist_id(response)
+    return await fetch_anilist_id(response)

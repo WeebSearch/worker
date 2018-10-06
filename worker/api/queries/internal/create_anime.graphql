@@ -1,6 +1,7 @@
 mutation(
   $rawName: String!
   $anilistId: Int
+  $malId: Int
   $name: String
   $thumbnailUrl: String
 ) {
@@ -9,6 +10,7 @@ mutation(
       rawName: $rawName
       anilistId: $anilistId
       name: $name
+      malId: $malId
       thumbnailUrl: $thumbnailUrl
     }
   ) {

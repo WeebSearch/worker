@@ -48,7 +48,6 @@ def download_archives(urls: List[str], cookie: str) -> None:
 
         with open(save_location, 'wb') as f:
             f.write(response.content)
-            print(response)
         loop = asyncio.get_event_loop()
         loop.run_until_complete(process_download(save_location, response.url))
 

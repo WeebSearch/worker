@@ -1,6 +1,6 @@
 mutation(
   $rawName: String!
-  $name: String!
+  $name: String
   $certainty: Int
   $characterId: ID
   $thumbnailUrl: String

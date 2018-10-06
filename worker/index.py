@@ -1,8 +1,12 @@
+import json
+from datetime import datetime
+
 import dotenv
 
-dotenv.load_dotenv()
-
+from api.cache import cache
 import asyncio
+
+dotenv.load_dotenv()
 
 import logging
 import sys
@@ -19,17 +23,9 @@ async def main():
     # parser = init_cli()
     # print(parser.parse_args(sys.argv[1:]))
 
-    # rar_path = Path('downloads/New_Game_TV_2016_Eng.rar')
-    # await process_download(rar_path, link_url='http://subs.com.ru/page.php?id=44106&a=dl', delete=False)
-    query = {
-
-    }
-    print('working')
-    # download = Path(
-    #     'downloads/New_Game_TV_2016_Eng/[Doki] New Game! - 09 (1280x720 h264 AAC) [1306CED6].ass')
-    # for i in load_subs(download):
-    #     valid = is_valid_line(i)
-    #     print(f'{i.style}: {i.text} {valid}')
+    rar_path = Path('downloads/New_Game_TV_2016_Eng.rar')
+    await process_download(rar_path,
+                           link_url='http://subs.com.ru/page.php?id=44106&a=dl', delete=False)
 
 
 if __name__ == '__main__':

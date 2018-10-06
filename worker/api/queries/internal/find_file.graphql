@@ -1,0 +1,5 @@
+query($fileName: String!) {
+  files(where: { fileName: $fileName } orderBy: updatedAt_DESC) {
+    id
+  }
+}
