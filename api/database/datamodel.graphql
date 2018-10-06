@@ -13,9 +13,9 @@ type User {
 
 type Anime {
   id: ID! @unique
-  anilistId: Int
-  malId: Int
-  rawName: String!
+  anilistId: Int # it's possible that we will get multiple entries of the same
+  malId: Int # character in one anime because of the different rawNames so these aren't unique
+  rawName: String! @unique
   name: String
   thumbnailUrl: String
   characters: [Character!]!
