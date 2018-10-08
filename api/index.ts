@@ -26,7 +26,7 @@ server.express.use(sess);
 
 const cors = {
   credentials: true,
-  origin: "http://localhost:4000"
+  origin: "*"
 };
 
 server.start({cors}, () => console.log(`Server is running on http://localhost:4000`));

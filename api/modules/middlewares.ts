@@ -11,7 +11,7 @@ export const auth = {
   //   }
 };
 
-export const permissions = async (resolve, root, name, ctx: Context, info) => {
+export const authorization = async (resolve, root, name, ctx: Context, info) => {
   const user = ctx.db.query.user({
     where: {}
   });

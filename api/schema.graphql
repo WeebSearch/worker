@@ -17,11 +17,11 @@ type AuthResponse {
 }
 
 type Query {
-  auth(token: String!): AuthResponse
-  signIn(email: String!, password: String!): AuthResponse
   dialogues(search: String): [Dialogue!]!
 }
 
 type Mutation {
-  signup(email: String!, password: String!, name: String!): AuthResponse
+  auth(token: String!): AuthResponse
+  signIn(email: String!, password: String!): AuthResponse
+  signUp(email: String!, password: String!, name: String!): AuthResponse
 }

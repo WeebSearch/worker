@@ -2,9 +2,15 @@ import * as jwt from "jsonwebtoken";
 import { Prisma } from "./generated/prisma";
 import { JwtResponse } from "./interfaces/query";
 
+export interface UserSession {
+    userId?: string;
+}
+
+
 export interface Context {
   db: Prisma;
   request: any;
+  session: Express.Session & UserSession;
 }
 
 export function getUserId(ctx: Context) {
@@ -26,7 +32,7 @@ export class AuthError extends Error {
   }
 }
 
-export const signJwt = async (payload: Object): Promise<JwtResponse> => {
+export const signJwt = async (payload: object): Promise<JwtResponse> => {
   const expiry = process.env.TOKEN_EXPIRE || "10d";
   const token = await jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: expiry
