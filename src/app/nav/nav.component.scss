@@ -1,0 +1,20 @@
+.navbar {
+  .navbar-nav {
+    color: rgba(240, 255, 255, 0.5);
+    img {
+      max-width: 50%;
+      max-height: 50%;
+      border-radius: 10px;
+      margin-right: 5%;
+    }
+    .links {
+      display: flex;
+      flex-direction: row;
+      a {
+        display: flex;
+        color: #cfdddd;
+      }
+    }
+  }
+}
+

@@ -1,0 +1,12 @@
+<nav class="navbar navbar-dark bg-dark mb-5">
+  <div class="container">
+    <div class="navbar-expand mr-auto">
+      <div class="navbar-nav">
+        <img src="assets/pfp.gif" alt="" class="avatar">
+        <div class="links">
+          <a class="nav-item nav-link" [routerLink]="link.link" *ngFor="let link of links">{{link.name}}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
