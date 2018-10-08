@@ -18,12 +18,15 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
-html,
-body {
-  height: 100%;
-}
-
 body {
   margin: 0;
   font-family: 'Roboto', sans-serif;
 }
+
+
+//
+//*:not(path):not(g) {
+//  color:                    hsla(210, 100%, 100%, 0.9) !important;
+//  outline:    solid 0.16rem hsla(210, 100%, 100%, 0.5) !important;
+//  box-shadow: none !important;
+//}

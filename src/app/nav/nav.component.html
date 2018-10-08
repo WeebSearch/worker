@@ -1,10 +1,18 @@
-<nav class="navbar navbar-dark bg-dark mb-5">
+<nav class="navbar navbar-dark bg-dark">
   <div class="container">
     <div class="navbar-expand mr-auto">
       <div class="navbar-nav">
-        <img src="assets/pfp.gif" alt="" class="avatar">
+        <div class="left vl" style="margin-right: 10px;">
+          <img *ngIf="auth.authed as logged" src="assets/pfp.gif" alt="" class="avatar">
+          <div *ngIf="!auth.authed && !auth.loading" src="assets/default.jpg" class="links"><a class="nav-item nav-link">Login</a></div>
+        </div>
+
         <div class="links">
-          <a class="nav-item nav-link" [routerLink]="link.link" *ngFor="let link of links">{{link.name}}</a>
+          <a *ngFor="let link of links; index as i" class="nav-item nav-link"
+             (hover)="highlight(index)"
+             [routerLink]="link.link">
+            {{link.name}}
+          </a>
         </div>
       </div>
     </div>

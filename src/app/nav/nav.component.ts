@@ -1,5 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../auth.service';
+import {Apollo} from 'apollo-angular';
+import gql from 'graphql-tag';
 
 interface Link {
   name: string;
@@ -16,21 +18,20 @@ export class NavComponent implements OnInit {
   public links: Link[] = [
     {name: 'Home', link: '/'},
     {name: 'Profile', link: '/editor'},
-    {name: 'Animes', link: '/login'},
-    {name: 'Editor', link: '/editor'}
+    {name: 'Animes', link: '/animes'},
+    {name: 'Editor', link: '/editor'},
+    {name: 'Login', link: '/login'}
   ];
 
-  constructor(private auth: AuthService) {
-    auth.isAuthenticated().subscribe(item => {
-      console.log('aaa');
-      console.log('aaa');
-      console.log('aaa');
-      console.log('aaa');
-      console.log(item);
-    });
+  constructor(public auth: AuthService, private apollo: Apollo) {
+    auth.isAuthenticated$().subscribe(console.log)
   }
 
 
   ngOnInit() {
+  }
+
+  highlight(){
+
   }
 }

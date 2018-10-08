@@ -1,0 +1,64 @@
+.container-fluid {
+  padding: 0;
+  height: 100%;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  background: linear-gradient(
+      rgba(0, 0, 0, 0.7),
+      rgba(0, 0, 0, 0.7)
+  ),
+  url(../../assets/wp2.jpg);
+}
+
+body, html {
+  overflow: hidden !important;
+}
+
+.login {
+  padding-top: 5%;
+  width: 500px;
+  height: 500px;
+  text-align: center;
+  margin: 0 auto;
+  h3 {
+    font-size: 3vw;
+    color: #cfd9de;
+    margin-bottom: 2vw;
+  }
+  input {
+    margin-bottom: 1rem;
+    text-align: center;
+    width: 100%;
+    height: 3rem;
+    background-color: rgba(0,0,0,0.1);
+    border: none;
+    border-bottom: 1px white;
+    color: white;
+    outline: none;
+    font-size: 2rem;
+    ::placeholder {
+      color: #ababb1;
+    }
+
+    //-webkit-border-radius: 5px;
+    //-moz-border-radius: 5px;
+    //border-radius: 5px;
+  }
+  .btn {
+    font-size: 1.5rem;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    outline: none;
+  }
+}
+
+.background {
+  height: 100%;
+}
+
+.title {
+  padding-top: 5%;
+  color: ghostwhite;
+  font-size: 7vw;
+}

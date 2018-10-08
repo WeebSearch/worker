@@ -25,7 +25,7 @@ const routes: Routes = [
 @NgModule({
   declarations: [AppComponent, NavComponent, LoginComponent, PageNotFoundComponent, HomeComponent],
   imports: [
-    BrowserModule, RouterModule.forRoot(routes, {enableTracing: true}), HttpLinkModule, HttpClientModule],
+    BrowserModule, RouterModule.forRoot(routes), HttpLinkModule, HttpClientModule],
   providers: [Apollo, JwtHelperService],
   bootstrap: [AppComponent]
 })
@@ -33,8 +33,8 @@ export class AppModule {
   constructor(apollo: Apollo,
               httpLink: HttpLink) {
     const link = httpLink.create({
-      uri: '/graphql',
-      withCredentials: true
+      uri: 'http://localhost:4000',
+      // withCredentials: true
     });
 
     apollo.create({link, cache: new InMemoryCache()});
