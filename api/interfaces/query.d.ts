@@ -13,8 +13,7 @@ export interface SignupCredentials extends LoginCredentials {
 }
 
 export interface AuthResponse {
-  token: string;
-  expiration: number;
-  email: string;
-  name: string;
+  successful: boolean;
+  token?: string;
 }
+

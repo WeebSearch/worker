@@ -11,16 +11,20 @@
 	"dependencies": {
 		"apollo-server": "^2.1.0",
 		"bcryptjs": "^2.4.3",
+		"connect-redis": "^3.4.0",
 		"dotenv": "^6.0.0",
+		"express-session": "^1.15.6",
 		"graphql-yoga": "1.16.2",
 		"jsonwebtoken": "8.3.0",
-		"prisma-binding": "2.1.6",
 		"prisma": "1.16.5",
+		"prisma-binding": "2.1.6",
 		"redis": "^2.8.0"
 	},
 	"devDependencies": {
 		"@types/bcryptjs": "^2.4.2",
+		"@types/connect-redis": "0.0.7",
 		"@types/dotenv": "^4.0.3",
+		"@types/express-session": "^1.15.11",
 		"@types/jsonwebtoken": "^7.2.8",
 		"@types/node": "^10.11.0",
 		"@types/redis": "^2.8.6",

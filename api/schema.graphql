@@ -1,31 +1,27 @@
 # import User from "generated/prisma.graphql"
+# import Dialogue from "generated/prisma.graphql"
+
 
 type LoginCredentials {
-    email: String!
-    password: String!
-}
-
-type AuthResponse {
-    token: String
-    expiration: Int
-    email: String
-    name: String
-}
-
-fragment LoginCredentials on User {
-    email
-    password
+  email: String!
+  password: String!
 }
 
 # type SignupCredentials {
 # 	...LoginCredentials
 # 	name: String
 # }
+type AuthResponse {
+  successful: Boolean!
+  token: String
+}
 
 type Query {
-    auth(email: String!, password: String!): AuthResponse
+  auth(token: String!): AuthResponse
+  signIn(email: String!, password: String!): AuthResponse
+  dialogues(search: String): [Dialogue!]!
 }
 
 type Mutation {
-    signup(email: String!, password: String!, name: String!): AuthResponse
+  signup(email: String!, password: String!, name: String!): AuthResponse
 }

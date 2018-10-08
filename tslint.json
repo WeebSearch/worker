@@ -6,7 +6,7 @@
 	],
 	"linterOptions": {
 		"exclude": [
-			"src/generated/prisma.ts",
+			"api/generated/prisma.ts",
 			"node_modules"
 		]
 	},
