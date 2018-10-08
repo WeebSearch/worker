@@ -1,11 +1,22 @@
 <div class="container-fluid">
   <div class="background">
-    <h1 class="title" style="text-align: center">Weeb Search</h1>
+    <h1 class="title">Weeb Search</h1>
     <div class="login">
-      <h3>Login</h3>
-      <input type="text" name="u" placeholder="Username" required="required"/>
-      <input type="password" name="p" placeholder="Password" required="required"/>
-      <button type="submit" class="btn btn-primary btn-block btn-large">Let me in.</button>
+      <form (submit)="attemptLogin(email, password, $event)" >
+        <h3>{{formMode}}</h3>
+        <input #email type="text" name="email" placeholder="Email" required="required"/>
+        <input #password type="password" name="password" placeholder="Password" required="required"/>
+        <button *ngIf="!loggingIn; else progress"
+                (mouseenter)="setLoginDefault()"
+                (mouseleave)="setLoginRandom()"
+                type="submit"
+                class="btn btn-primary btn-block btn-large" style="height: 3rem">{{login}}</button>
+        <ng-template #progress>
+          <div class="progress" style="height: 3rem">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+          </div>
+        </ng-template>
+      </form>
     </div>
   </div>
 </div>

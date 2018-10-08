@@ -31,9 +31,9 @@ export class AuthService {
     //   return Observable.create(false);
     // }
 
-    return this.apollo.query<{ auth: { successful: boolean } }>({
-      query: gql`
-        query AuthQuery($token: String!) {
+    return this.apollo.mutate<{ auth: { successful: boolean } }>({
+      mutation: gql`
+        mutation AuthQuery($token: String!) {
           auth(token: $token) {
             successful
           }
@@ -44,4 +44,17 @@ export class AuthService {
       }
     }).pipe(map(result => result.data.auth.successful));
   };
+
+  public login = (email: string, password: string) => {
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation LoginMutation($email: String! $password: String!) {
+          signIn(email: $email password: $password){
+            successful
+          }
+        }
+      `,
+      variables: {email, password}
+    }).pipe(map(result => result.data.signIn.successful))
+  }
 }
