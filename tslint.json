@@ -2,7 +2,8 @@
 	"defaultSeverity": "error",
 	"extends": [
 		"tslint:latest",
-		"tslint-config-prettier"
+		"tslint-config-prettier",
+    "tslint-eslint-rules"
 	],
 	"linterOptions": {
 		"exclude": [
@@ -15,6 +16,7 @@
 		"no-constant-condition": true,
 		"no-console": false,
 		"interface-name": [true, "never-prefix"],
+    "object-curly-spacing": true,
 		"object-literal-sort-keys": false
 	},
 	"rulesDirectory": [
