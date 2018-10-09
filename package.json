@@ -36,6 +36,7 @@
     "ngx-bootstrap": "^3.0.1",
     "ramda": "^0.25.0",
     "rxjs": "^6.0.0",
+    "tslint-eslint-rules": "^5.4.0",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {
