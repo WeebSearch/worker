@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
-import {AuthService} from '../auth.service';
-import {Router} from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -38,8 +38,8 @@ export class LoginComponent implements OnInit {
   }
 
   public attemptLogin = (emailInput: HTMLInputElement, passInput: HTMLInputElement, event: Event) => {
-    const {value: email} = emailInput;
-    const {value: password} = passInput;
+    const { value: email } = emailInput;
+    const { value: password } = passInput;
     event.preventDefault();
 
     this.loggingIn = true;

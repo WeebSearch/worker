@@ -1,10 +1,9 @@
-import {Injectable} from '@angular/core';
-import {JwtHelperService} from '@auth0/angular-jwt';
-import {Apollo} from 'apollo-angular';
-import {Observable} from 'rxjs';
+import { Injectable } from '@angular/core';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { Apollo } from 'apollo-angular';
+import { Observable } from 'rxjs';
 import gql from 'graphql-tag';
-import {ApolloQueryResult} from 'apollo-client';
-import {map} from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -23,14 +22,7 @@ export class AuthService {
     });
   }
 
-  public isAuthenticated$ = (): Observable<any> => {
-    // console.log('checking auth');
-    // const token = localStorage.getItem('token');
-    //
-    // if (!token || this.jwtHelper.isTokenExpired(token)) {
-    //   return Observable.create(false);
-    // }
-
+  public isAuthenticated$ = (): Observable<boolean> => {
     return this.apollo.mutate<{ auth: { successful: boolean } }>({
       mutation: gql`
         mutation AuthQuery($token: String!) {
@@ -43,7 +35,7 @@ export class AuthService {
         token: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjam16aDE3N2gwcGt4MDg2M2VseW8xbjF2IiwiaWF0IjoxNTM4OTUzNDU1LCJleHAiOjE1Mzk4MTc0NTV9.q2D_dNuxIx7mQ4Q9u2o5Wnc1UUk_G1JLfO1jZNEE6Ag`
       }
     }).pipe(map(result => result.data.auth.successful));
-  };
+  }
 
   public login = (email: string, password: string) => {
     return this.apollo.mutate({
@@ -54,7 +46,7 @@ export class AuthService {
           }
         }
       `,
-      variables: {email, password}
-    }).pipe(map(result => result.data.signIn.successful))
+      variables: { email, password }
+    }).pipe(map(result => result.data.signIn.successful));
   }
 }

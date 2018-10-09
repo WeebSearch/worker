@@ -1,3 +1,14 @@
-<div class="container" style="text-align: center">
-  <img style="margin: 0 auto; height: 500%" src="https://orig00.deviantart.net/808a/f/2017/038/4/a/satania_render_1_by_thegothamguardian-day7052.png"/>
+<div class="container-fluid" style="text-align: center">
+  <h1 class="title">WeebSearch</h1>
+  <div class="anime-container">
+    <div class="anime-card" *ngFor="let anime of animes">
+        <div class="title-container"><h1>{{anime.rawName}}</h1></div>
+        <img class="anime-thumbnail" [src]="anime.thumbnailUrl">
+        <div class="anime-footer">
+          <p><b>{{anime.characters.length}}</b> characters</p>
+          <p><b>{{anime.episodes.length}}</b> episodes</p>
+        </div>
+    </div>
+  </div>
+  <!--<img style="margin: 0 auto; height: 500%" src="https://orig00.deviantart.net/808a/f/2017/038/4/a/satania_render_1_by_thegothamguardian-day7052.png"/>-->
 </div>
