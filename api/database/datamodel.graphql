@@ -9,11 +9,15 @@ type User {
   id: ID! @unique
   hash: String!
   salt: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type APIKey {
   user: User!
   token: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type Anime {
@@ -28,6 +32,8 @@ type Anime {
   dialogues: [Dialogue!]!
   seasons: [Season!]!
   files: [File!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type Archive {
@@ -35,11 +41,13 @@ type Archive {
   linkUrl: String
   fileName: String!
   files: [File!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type Character {
   id: ID! @unique
-  anilistId: Int @unique
+  anilistId: Int
   rawName: String!
   name: String
   certainty: Int
@@ -48,6 +56,8 @@ type Character {
   episodes: [Episode!]!
   seasons: [Season!]!
   dialogues: [Dialogue!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type Dialogue {
@@ -61,6 +71,8 @@ type Dialogue {
   start: Int!
   end: Int!
   text: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type Episode {
@@ -75,6 +87,8 @@ type Episode {
   language: String! @default(value: "EN")
   characters: [Character!]!
   dialogues: [Dialogue!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type File {
@@ -84,6 +98,8 @@ type File {
   linkUrl: String
   fileName: String!
   episode: Episode!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type Season {
@@ -92,4 +108,6 @@ type Season {
   archive: Archive
   dialogues: [Dialogue!]!
   # I don't know how I feel about this one yet
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
