@@ -16,13 +16,15 @@ body, html {
 }
 
 .login {
-  padding-top: 5%;
+  display: flex;
+  align-items: center;
   width: 500px;
-  height: 500px;
+  height: 100%;
+  font-family: 'Open Sans';
   text-align: center;
-  margin: 0 auto;
+  margin: auto auto;
   h3 {
-    font-size: 3vw;
+    font-size: 5vw;
     color: #cfd9de;
     margin-bottom: 2vw;
   }
@@ -49,6 +51,7 @@ body, html {
     font-size: 1.5rem;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
+    font-weight: bolder;
     outline: none;
   }
 }

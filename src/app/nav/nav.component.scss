@@ -1,27 +1,40 @@
-.navbar {
-  color: rgba(240, 255, 255, 0.5);
-  .navbar-nav {
-    color: rgba(240, 255, 255, 0.5);
-    div > img {
-      width:  40px;
-      height: 40px;
-      min-width:  40px;
-      min-height: 40px;
-      border-radius: 10px;
-      margin-right: 5%;
-    }
-    .links {
-      display: flex;
-      flex-direction: row;
-      a {
-        font-size: 1rem;
-        display: flex;
-        color: #cfdddd;
-      }
-    }
+@import '~src/app/vars';
+
+#nav-root {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  color: rgba(240, 255, 255, 0.2);
+  opacity: 0.5;
+  &:hover {
+    opacity: 1;
   }
 }
 
+.navbar-nav {
+  color: rgba(240, 255, 255, 0.5);
+  div > img {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    border-radius: 10px;
+    margin-right: 5%;
+  }
+  .links {
+    display: flex;
+    flex-direction: row;
+    a {
+      &:hover {
+        color: $alt-font
+      }
+      font-weight: bold;
+      font-size: 1rem;
+      display: flex;
+      color: #cfdddd;
+    }
+  }
+}
 .vl {
   margin: auto 15px;
   border-right: 2px white;

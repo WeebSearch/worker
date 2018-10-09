@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { map } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 interface Anime {
+  id: string;
   rawName: string;
   characters: any[];
   episodes: any[];
@@ -16,9 +18,18 @@ interface Anime {
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+  public missingThumbnailPlaceholders = [
+    'shrug1.jpg',
+    'shrug2.png',
+    'shrug3.png',
+    'shrug4.png',
+    'shrug5.jpg',
+    'shrug6.png',
+  ].map(file => `assets/shrugs/${file}`);
+
   public animes: Anime[];
 
-  constructor(public apollo: Apollo) {
+  constructor(public apollo: Apollo, public router: Router) {
     this.apollo.query<{ animes: Anime[] }>({
       query: gql`
         query {
@@ -41,6 +52,10 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  animeLink = (id: string) => {
+    return `/anime/${id}`;
   }
 
 }

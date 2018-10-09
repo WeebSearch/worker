@@ -1,0 +1,33 @@
+.root {
+
+}
+
+.badges {
+  > .badge {
+    //max-width: 50px;
+    //max-height: 50px;
+    color: dodgerblue;
+  }
+}
+
+.anime-header {
+  display: flex;
+  align-self: center;
+  justify-content: space-around;
+  > img {
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+  }
+  > h1 {
+    align-self: flex-end;
+  }
+  width: 60%;
+  margin: 0 auto 3%;
+}
+
+.anime-grid {
+  display: grid;
+  grid-template-rows: 1fr 3fr;
+  grid-template-columns: 2fr 2fr;
+}

@@ -2,6 +2,7 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 @import "~bootstrap/dist/css/bootstrap.css";
 @import "~font-awesome/css/font-awesome.css";
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
 
 .text {
   color: azure;
@@ -13,21 +14,19 @@ body {
   background-color: #14171b;
 }
 
-//body {
-//  margin: 0;
-//  font-family: 'Roboto', sans-serif;
-//}
+* {
+  font-family: 'Open Sans', 'Roboto', sans-serif;
+}
+
 //
 //body {
 //  margin: 0;
 //  font-family: 'Roboto', sans-serif;
 //}
 
-//
-//
-//
-//*:not(path):not(g) {
-//  color:                    hsla(210, 100%, 100%, 0.9) !important;
-//  outline:    solid 0.16rem hsla(210, 100%, 100%, 0.5) !important;
-//  box-shadow: none !important;
-//}
+
+*:not(path):not(g) {
+  color:                    hsla(210, 100%, 100%, 0.9) !important;
+  outline:    solid 0.16rem hsla(210, 100%, 100%, 0.5) !important;
+  box-shadow: none !important;
+}

@@ -1,29 +1,30 @@
-import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
 
-import {AppComponent} from './app.component';
-import {NavComponent} from './nav/nav.component';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatMenuModule} from '@angular/material/menu';
-import {MatButtonModule} from '@angular/material/button';
-import {RouterModule, Routes} from '@angular/router';
-import {LoginComponent} from './login/login.component';
-import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
-import {HomeComponent} from './home/home.component';
-import {Apollo} from 'apollo-angular';
-import {HttpLink, HttpLinkModule} from 'apollo-angular-link-http';
-import {InMemoryCache} from 'apollo-cache-inmemory';
-import {HttpModule} from '@angular/http';
-import {HttpClientModule} from '@angular/common/http';
-import {JwtHelperService} from '@auth0/angular-jwt';
+import { AppComponent } from './app.component';
+import { NavComponent } from './nav/nav.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+import { RouterModule, Routes } from '@angular/router';
+import { LoginComponent } from './login/login.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { HomeComponent } from './home/home.component';
+import { Apollo } from 'apollo-angular';
+import { HttpLink, HttpLinkModule } from 'apollo-angular-link-http';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { HttpClientModule } from '@angular/common/http';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { AnimeViewerComponent } from './anime-viewer/anime-viewer.component';
 
 const routes: Routes = [
-  {path: '', component: HomeComponent},
-  {path: 'login', component: LoginComponent}
+  { path: '', component: HomeComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'anime/:name', component: AnimeViewerComponent }
 ];
 
 @NgModule({
-  declarations: [AppComponent, NavComponent, LoginComponent, PageNotFoundComponent, HomeComponent],
+  declarations: [AppComponent, NavComponent, LoginComponent, PageNotFoundComponent, HomeComponent, AnimeViewerComponent],
   imports: [
     BrowserModule, RouterModule.forRoot(routes), HttpLinkModule, HttpClientModule],
   providers: [Apollo, JwtHelperService],
@@ -37,6 +38,6 @@ export class AppModule {
       // withCredentials: true
     });
 
-    apollo.create({link, cache: new InMemoryCache()});
+    apollo.create({ link, cache: new InMemoryCache() });
   }
 }

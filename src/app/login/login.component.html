@@ -1,10 +1,9 @@
 <div class="container-fluid">
   <div class="background">
-    <h1 class="title">Weeb Search</h1>
     <div class="login">
       <form (submit)="attemptLogin(email, password, $event)" >
         <h3>{{formMode}}</h3>
-        <input #email type="text" name="email" placeholder="Email" required="required"/>
+        <input #email spellcheck="false" type="text" name="email" placeholder="Email" required="required"/>
         <input #password type="password" name="password" placeholder="Password" required="required"/>
         <button *ngIf="!loggingIn; else progress"
                 (mouseenter)="setLoginDefault()"

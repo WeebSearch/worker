@@ -1,0 +1,17 @@
+<div class="container-fluid root" style="text-align: center; padding-top: 5%;">
+  <div class="anime-header">
+    <img [src]="anime.thumbnailUrl" alt="">
+    <div class="right-column">
+      <div class="badges"></div>
+        <!--<object src="assets/badges/check-square.svg">-->
+      <h1>{{anime.rawName}}</h1>
+    </div>
+  </div>
+  <div class="anime-grid">
+    <select name="episodes">
+      <option *ngFor="let episode of episodes" [value]="getEpisodeSelector(episode)">{{getEpisodeSelector(episode)}}
+      </option>
+    </select>
+  </div>
+  <!--<img style="" src="https://i.ytimg.com/vi/35gZX_0iIe4/maxresdefault.jpg" alt="">-->
+</div>
