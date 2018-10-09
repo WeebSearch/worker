@@ -6,24 +6,9 @@ export interface UserSession {
     userId?: string;
 }
 
-
 export interface Context {
   db: Prisma;
-  request: any;
-  session: Express.Session & UserSession;
-}
-
-export function getUserId(ctx: Context) {
-  const Authorization = ctx.request.get("Authorization");
-  if (Authorization) {
-    const token = Authorization.replace("Bearer ", "");
-    const { userId } = jwt.verify(token, process.env.APP_SECRET) as {
-      userId: string;
-    };
-    return userId;
-  }
-
-  throw new AuthError();
+  request: any & Express.Session & UserSession;
 }
 
 export class AuthError extends Error {

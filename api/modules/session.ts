@@ -1,14 +1,15 @@
 import * as redisSession from 'connect-redis'
 import * as session from "express-session";
-import {cache as client} from "./cache";
+import { cache as client } from "./cache";
 
 const RedisStore = redisSession(session);
 export const sess = session({
-  store: new RedisStore({client}),
+// @ts-ignore
+  store: new RedisStore({ client }),
   name: "wsid",
   secret: process.env.SESSION_SECRET,
-  resave: true,
-  saveUninitialized: true,
+  resave: false,
+  saveUninitialized: false,
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",

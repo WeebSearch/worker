@@ -1,39 +1,49 @@
 import * as jwt from "jsonwebtoken";
-import { AuthError } from "../utils";
+import { AuthError, Context } from "../utils";
 
-export const isLoggedIn = async (resolve, parent, args, ctx) => {
-  // Include your agent code as Authorization: <token> header.
-  const token = ctx.request.get("Authorization");
+const isValidAuthHeader = (parts: string[]) => parts.length === 2 && parts[0] === 'Bearer';
 
-  if (!token) {
-    throw new Error("Missing Authorization header");
+export const isUserLoggedIn = (ctx: Context) => ctx.request.session && Boolean(ctx.request.session.userId)
+
+const hasValidJWT = (ctx: Context):boolean => {
+  const authHeader: string | undefined = ctx.request.get('Authorization');
+
+  if (!authHeader) {
+    return false;
   }
 
-  let auth = token.replace("Bearer ", "");
+  const parts = authHeader.split(' ')
+
+  if (!isValidAuthHeader(parts)) {
+    return false;
+  }
+
+  const token = parts.pop();
 
   try {
-    if (token === process.env.SUPER_SECRET) {
-      return resolve();
-    }
-    auth = await jwt.verify(token, process.env.JWT_SECRET);
-  } catch (err) {
-    throw new Error("Invalid Authorization header");
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
+    // TODO: Handle sessions manually here
+    // ctx.session.touch();
+    return Boolean(verified)
+  } catch (e) {
+    return false;
   }
+}
 
-  ctx.jwt = auth;
-
-  if (!auth) {
+export const isUserAuthorized = async (resolve, parent, args, ctx: Context): Promise<boolean> => {
+  if (!isUserLoggedIn(ctx) && !hasValidJWT(ctx)) {
     throw new AuthError();
   }
   return resolve();
-};
+}
 
 export const isOwner = async (resolve, parent, args, ctx) => {
-  const permit = ctx.request.get("Authorization") === process.env.SUPER_SECRET;
-
-  if (!permit) {
-    throw new Error("Unauthorized");
-  }
-
-  return resolve();
+  return false;
+  // const permit = ctx.request.get("Authorization") === process.env.SUPER_SECRET;
+  //
+  // if (!permit) {
+  //   throw new Error("Unauthorized");
+  // }
+  //
+  // return resolve();
 };

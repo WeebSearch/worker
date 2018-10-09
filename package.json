@@ -9,6 +9,7 @@
 		"tslint-check": "tslint-config-prettier-check ./tslint.json"
 	},
 	"dependencies": {
+		"@fortawesome/angular-fontawesome": "^0.2.1",
 		"apollo-server": "^2.1.0",
 		"bcryptjs": "^2.4.3",
 		"connect-redis": "^3.4.0",

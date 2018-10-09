@@ -1,4 +1,6 @@
 # import User from "generated/prisma.graphql"
+# import Anime from "generated/prisma.graphql"
+# import Episode from "generated/prisma.graphql"
 # import Dialogue from "generated/prisma.graphql"
 
 
@@ -7,10 +9,13 @@ type LoginCredentials {
   password: String!
 }
 
-# type SignupCredentials {
-# 	...LoginCredentials
-# 	name: String
-# }
+type Profile {
+  name: String!
+  email: String!
+  anilistName: String
+  malName: String
+}
+
 type AuthResponse {
   successful: Boolean!
   token: String
@@ -18,6 +23,10 @@ type AuthResponse {
 
 type Query {
   dialogues(search: String): [Dialogue!]!
+  anime(name: String!): Anime
+  animes(search: String id: ID): [Anime!]!
+  episodes(animeId: ID!): [Episode!]!
+  profile: Profile!
 }
 
 type Mutation {

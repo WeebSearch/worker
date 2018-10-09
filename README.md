@@ -32,9 +32,9 @@ them? Stop asking so many questions.
 
 - Anime, episode and character information is looked up on `MAL` and `Anilist`
 
-- Data is given structure and saved on PostgreSQL
+- Data is given structure and saved on Postgres
 
-- Elasticsearch is periodically updated with new information from PostgreSQL
+- Solr is updated with new information as they get added to Postgres
 
 - GraphQL is used as an API to interface with Elasticsearch
 
