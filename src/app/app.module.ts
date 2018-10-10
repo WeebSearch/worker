@@ -16,15 +16,18 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import { HttpClientModule } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { AnimeViewerComponent } from './anime-viewer/anime-viewer.component';
+import { ProfileComponent } from './profile/profile.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'anime/:name', component: AnimeViewerComponent }
+  { path: 'anime/:name', component: AnimeViewerComponent },
+  { path: 'profile', component: ProfileComponent },
+  { path: '**', component: PageNotFoundComponent }
 ];
 
 @NgModule({
-  declarations: [AppComponent, NavComponent, LoginComponent, PageNotFoundComponent, HomeComponent, AnimeViewerComponent],
+  declarations: [AppComponent, NavComponent, LoginComponent, PageNotFoundComponent, HomeComponent, AnimeViewerComponent, ProfileComponent],
   imports: [
     BrowserModule, RouterModule.forRoot(routes), HttpLinkModule, HttpClientModule],
   providers: [Apollo, JwtHelperService],

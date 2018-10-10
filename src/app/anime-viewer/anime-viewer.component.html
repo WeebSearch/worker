@@ -1,17 +1,41 @@
-<div class="container-fluid root" style="text-align: center; padding-top: 5%;">
-  <div class="anime-header">
-    <img [src]="anime.thumbnailUrl" alt="">
-    <div class="right-column">
-      <div class="badges"></div>
-        <!--<object src="assets/badges/check-square.svg">-->
-      <h1>{{anime.rawName}}</h1>
+<div class="banner-container">
+  <img class="banner" src="https://cdn.anilist.co/img/dir/anime/banner/21202-UWijdV7RMnXo.jpg" alt="">
+</div>
+<div class="anime-header  root">
+  <div class="title-column">
+    <div class="badges"></div>
+    <h1>{{anime?.rawName}}</h1>
+  </div>
+  <img class="anime-thumbnail" [src]="anime?.thumbnailUrl" alt="">
+</div>
+<div class="container-fluid" style="text-align: center;">
+  <div class="episode-container">
+    <h2 class="episode-label">Episodes</h2>
+    <div class="episode-list">
+      <button *ngFor="let ep of episodes"
+              class="episode-button btn btn-info"
+              (click)="loadSubs(ep.id)"
+              (mouseenter)="previewEpisode(ep.episodeNumber)">
+        {{getEpisodeSelector(ep)}}
+      </button>
     </div>
+    <h3 class="episode-name">{{episodeNamePreview}}</h3>
   </div>
+
   <div class="anime-grid">
-    <select name="episodes">
-      <option *ngFor="let episode of episodes" [value]="getEpisodeSelector(episode)">{{getEpisodeSelector(episode)}}
-      </option>
-    </select>
-  </div>
+      <h1>Dialogues</h1>
+      <h1>Characters</h1>
+      <div class="dialogues">
+        <img src="assets/chibi-dance.gif" class="chibi-load" *ngIf="loading; else dialogueslist">
+        <div *ngIf="!loading">
+          <div #dialogueslist *ngFor="let dialogue of dialogues" class="dialogue">
+            [{{dialogue.order + 1}}] <b>{{dialogue.character.rawName}}:</b> {{dialogue.text}}
+          </div>
+        </div>
+      </div>
+      <div>
+        <div *ngFor="let character of episode?.characters">{{character.rawName}}</div>
+      </div>
+    </div>
   <!--<img style="" src="https://i.ytimg.com/vi/35gZX_0iIe4/maxresdefault.jpg" alt="">-->
 </div>

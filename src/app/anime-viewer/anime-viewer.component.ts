@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Apollo } from 'apollo-angular';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import gql from 'graphql-tag';
 
 
 interface Episode {
+  id: string;
   episodeNumber: string;
   file: {
     fileName: string;
@@ -12,7 +13,28 @@ interface Episode {
   anime: {
     rawName: string;
   };
+  characters: {
+    name?: string;
+    rawName?: string;
+  }[];
+  dialogues: {
+  }[];
 
+}
+
+interface Dialogue {
+  text: string;
+  order: string;
+  character: {
+    rawName: string;
+  };
+}
+
+interface Anime {
+  id: string;
+  name?: string;
+  rawName: string;
+  thumbnailUrl?: string;
 }
 
 @Component({
@@ -25,26 +47,66 @@ export class AnimeViewerComponent implements OnInit {
 
   animeName: string;
   episodes: Episode[];
+  /**
+   * Current selected episode
+   */
+  episode: Episode;
+  episodeNamePreview?: string;
+  dialogues: Dialogue[];
   anime: Anime;
+  animeId?: string;
+  loading = true;
 
   constructor(public router: Router, public apollo: Apollo) {
     this.animeName = this.router.url.split('/').pop();
-    this.queryAnimes()
+    this.queryAnimes();
   }
 
   ngOnInit() {
   }
 
+  queryDialogues = (episodeId: string) => {
+    console.log('querying dialogues');
+    this.apollo.query<{dialogues: Dialogue[]}>({
+      query: gql`
+        query($episodeId: ID!) {
+          dialogues(episodeId: $episodeId) {
+            text
+            character {
+              thumbnailUrl
+              name
+              rawName
+            }
+            order
+            start
+            end
+          }
+        }
+      `,
+      variables: {
+        episodeId
+      }
+    }).subscribe(res => {
+      console.log(res);
+      this.loading = false;
+      this.dialogues = res.data.dialogues;
+    });
+  }
   queryEpisodes = (animeId: string) => {
-    this.apollo.query({
+    this.apollo.query<{episodes: Episode[]}>({
       query: gql`
         query($animeId: ID!) {
           episodes(animeId: $animeId) {
+            id
             episodeNumber
             file {
               fileName
             }
             anime {
+              rawName
+            }
+            characters {
+              name
               rawName
             }
           }
@@ -55,17 +117,22 @@ export class AnimeViewerComponent implements OnInit {
       }
     }).subscribe(res => {
       this.episodes = res.data.episodes;
+      if (this.episodes.length) {
+        this.episode = this.episodes[0];
+        this.previewEpisode(this.episode.episodeNumber)
+      }
+      this.queryDialogues(this.episodes[0].id);
       console.log(this.episodes);
     });
 
   }
 
   getEpisodeSelector(episode: Episode) {
-    return `${episode.anime.rawName} ${episode.episodeNumber}`;
+    return `${episode.episodeNumber}`;
   }
 
   private queryAnimes() {
-    this.apollo.query({
+    this.apollo.query<{anime: Anime}>({
       query: gql`
         query($name: String!) {
           anime(name: $name) {
@@ -81,13 +148,23 @@ export class AnimeViewerComponent implements OnInit {
         }
       `,
       variables: {
-        animeId: this.animeName
+        name: decodeURIComponent(this.animeName)
       }
     }).subscribe(res => {
       this.anime = res.data.anime;
-      console.log(this.anime);
+      this.animeId = res.data.anime.id;
       this.queryEpisodes(res.data.anime.id);
     });
+
+  }
+
+  loadSubs(id: string) {
+    this.loading = true;
+    this.queryDialogues(id);
+  }
+
+  previewEpisode(episodeNumber: string) {
+    this.episodeNamePreview = `Episode: ${episodeNumber}`;
 
   }
 }

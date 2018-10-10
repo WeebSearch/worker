@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';
 import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
+import {Router} from '@angular/router';
 
 interface Link {
   name: string;
@@ -17,13 +18,13 @@ interface Link {
 export class NavComponent implements OnInit {
   public links: Link[] = [
     { name: 'Home', link: '/' },
-    { name: 'Profile', link: '/editor' },
+    { name: 'Profile', link: '/profile' },
     { name: 'Animes', link: '/animes' },
     { name: 'Editor', link: '/editor' },
     { name: 'Login', link: '/login' }
   ];
 
-  constructor(public auth: AuthService, private apollo: Apollo) {
+  constructor(public auth: AuthService, private router: Router) {
     auth.isAuthenticated$().subscribe(console.log);
   }
 
@@ -32,6 +33,11 @@ export class NavComponent implements OnInit {
   }
 
   highlight() {
+
+  }
+
+  debug = () => {
+    // document.querySelector('body').
 
   }
 }

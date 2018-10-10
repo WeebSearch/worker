@@ -3,7 +3,7 @@
     <div class="navbar-expand mr-auto">
       <div class="navbar-nav">
         <div class="left vl" style="margin-right: 10px;">
-          <img *ngIf="auth.authed as logged" src="assets/pfp.gif" alt="" class="avatar">
+          <img *ngIf="auth.authed as logged" src="assets/pfp.gif" alt="" class="avatar" (click)="debug()">
           <div *ngIf="!auth.authed && !auth.loading" src="assets/default.jpg" class="links"><a class="nav-item nav-link">Login</a></div>
         </div>
 

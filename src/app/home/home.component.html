@@ -1,6 +1,7 @@
 <div class="container-fluid" style="text-align: center">
   <h1 class="title">WeebSearch</h1>
   <div class="anime-container">
+    <ng-template *ngIf="!animes || !animes.length">Whoa couldn't find anything</ng-template>
     <div class="anime-card" *ngFor="let anime of animes" [routerLink]="[animeLink(anime.rawName)]">
       <div class="title-container"><h1>{{anime.rawName}}</h1></div>
       <div class="thumbnail-container">
