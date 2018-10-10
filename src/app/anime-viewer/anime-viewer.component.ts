@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import { Router } from '@angular/router';
 import gql from 'graphql-tag';
-import { random } from '../utils';
+import { DEFAULT_COLORS, random } from '../utils';
 
 interface Character {
   id: string;
   name?: string;
   rawName?: string;
   thumbnailUrl?: string;
+  color: string;
 }
 
 interface Episode {
@@ -41,6 +42,7 @@ interface Anime {
   styleUrls: ['./anime-viewer.component.scss']
 })
 
+
 export class AnimeViewerComponent implements OnInit {
 
   public loaders = Array(11).fill(0).map((_, i) => `assets/loaders/loader${i + 1}.gif`);
@@ -52,6 +54,7 @@ export class AnimeViewerComponent implements OnInit {
    */
   episode: Episode;
   characters: { [id: string]: Character };
+  colors?: string[];
   episodeNamePreview?: string;
   dialogues: Dialogue[];
   anime: Anime;
@@ -73,6 +76,8 @@ export class AnimeViewerComponent implements OnInit {
   }
 
   characterList = (): Character[] => Object.values(this.characters);
+
+  getDialogueSpeaker = (dialogue: Dialogue) => this.characters[dialogue.character.id];
 
   queryEpisode = (episodeId: string) => {
     console.log('querying dialogues');
@@ -108,12 +113,15 @@ export class AnimeViewerComponent implements OnInit {
       this.loaderPlaying = false;
       const { dialogues, characters } = res.data.episode;
       this.dialogues = dialogues;
-      console.log(res.data.episode.characters);
-      this.characters = characters.reduce((map: {}, char: Character) => {
-        map[char.id] = char;
+
+      this.colors = DEFAULT_COLORS.splice(0, characters.length - 1);
+      this.characters = characters.reduce((map: {}, char: Character, i: number) => {
+        map[char.id] = {
+          ...char,
+          color: this.colors[i]
+        };
         return map;
       }, {});
-      console.log(this.characters);
     });
   }
 
@@ -178,7 +186,7 @@ export class AnimeViewerComponent implements OnInit {
   }
 
 
-  private queryAnimes() {
+  private queryAnimes = () => {
     this.apollo.query<{ anime: Anime }>({
       query: gql`
         query($name: String!) {
@@ -205,12 +213,12 @@ export class AnimeViewerComponent implements OnInit {
 
   }
 
-  loadSubs(id: string) {
+  loadSubs = (id: string) => {
     this.loading = true;
     this.queryEpisode(id);
   }
 
-  previewEpisode(episodeNumber: string) {
+  previewEpisode = (episodeNumber: string) => {
     this.episodeNamePreview = `Episode: ${episodeNumber}`;
   }
 }

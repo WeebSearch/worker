@@ -29,14 +29,14 @@
         <img [src]="randomLoader()" class="loader" *ngIf="loading && !loaderPlaying">
         <div *ngIf="!loading">
           <div #dialogueslist *ngFor="let dialogue of dialogues" class="dialogue">
-            <img class="speaker-thumbnail" [src]="" alt="">
-            <p>[{{dialogue.order + 1}}] <b>{{getSpeakerName(characters[dialogue.character.id])}}:</b> {{dialogue.text}}</p>
+            <!--<img class="speaker-thumbnail" [src]="" alt="">-->
+            <p [style.background-color]="getDialogueSpeaker(dialogue).color">[{{dialogue.order + 1}}] <b>{{getSpeakerName(characters[dialogue.character.id])}}:</b> {{dialogue.text}}</p>
           </div>
         </div>
       </div>
       <div class="character-list">
-        <div *ngFor="let character of characterList()">
-          <h4>{{getCharacterListItem(character)}}</h4></div>
+        <div class="character" *ngFor="let character of characterList()" [style.background-color]="character.color">
+          <h6>{{getCharacterListItem(character)}}</h6></div>
       </div>
     </div>
   <!--<img style="" src="https://i.ytimg.com/vi/35gZX_0iIe4/maxresdefault.jpg" alt="">-->

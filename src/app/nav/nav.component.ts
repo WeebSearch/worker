@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../auth/auth.service';
 import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
 import {Router} from '@angular/router';

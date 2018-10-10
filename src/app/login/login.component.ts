@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../auth/auth.service';
 import { Router } from '@angular/router';
+import { random } from '../utils';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +21,7 @@ export class LoginComponent implements OnInit {
     'Trick Satania'
   ];
   public formMode = 'Login';
-  public loginButtonPrompt = this.prompts[Math.floor(Math.random() * this.prompts.length)];
+  public loginButtonPrompt = random(this.prompts);
   public login = this.loginButtonPrompt;
   loggingIn = false;
 

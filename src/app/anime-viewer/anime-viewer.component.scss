@@ -100,6 +100,14 @@ $secondary-background: #20232a;
   text-align: left;
 }
 
+.character {
+  padding: 3%;
+  margin-bottom: 2%;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+
 .loader {
   margin: 0 auto;
   max-height: 200px;
@@ -108,6 +116,10 @@ $secondary-background: #20232a;
 
 .dialogues {
   text-align: left;
+}
+
+.dialogue > p {
+  margin: 2px;
 }
 
 .speaker-thumbnail {
