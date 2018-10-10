@@ -58,6 +58,7 @@ export class AnimeViewerComponent implements OnInit {
   dialogues: Dialogue[];
   anime: Anime;
   animeId?: string;
+  loaderPlaying = false;
   loading = true;
 
   constructor(public router: Router, public apollo: Apollo) {
@@ -68,7 +69,10 @@ export class AnimeViewerComponent implements OnInit {
   ngOnInit() {
   }
 
-  randomLoader = () => random(this.loaders);
+  randomLoader = () => {
+    this.loaderPlaying = true;
+    return random(this.loaders);
+  }
 
   queryDialogues = (episodeId: string) => {
     console.log('querying dialogues');
@@ -94,6 +98,7 @@ export class AnimeViewerComponent implements OnInit {
     }).subscribe(res => {
       console.log(res);
       this.loading = false;
+      this.loaderPlaying = false;
       this.dialogues = res.data.dialogues;
     });
   }
@@ -170,6 +175,5 @@ export class AnimeViewerComponent implements OnInit {
 
   previewEpisode(episodeNumber: string) {
     this.episodeNamePreview = `Episode: ${episodeNumber}`;
-
   }
 }
