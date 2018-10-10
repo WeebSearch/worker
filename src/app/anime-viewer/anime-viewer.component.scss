@@ -76,10 +76,6 @@ $secondary-background: #20232a;
   flex-direction: row;
 }
 
-.chibi-load {
-  margin: 0 auto;
-  display: flex;
-}
 
 .episode {
   display: flex;
@@ -98,6 +94,12 @@ $secondary-background: #20232a;
   > * {
     color: whitesmoke;
   }
+}
+
+.loader {
+  margin: 0 auto;
+  max-height: 200px;
+  display: flex;
 }
 
 .dialogues {

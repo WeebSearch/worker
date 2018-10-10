@@ -26,7 +26,7 @@
       <h1>Dialogues</h1>
       <h1>Characters</h1>
       <div class="dialogues">
-        <img src="assets/chibi-dance.gif" class="chibi-load" *ngIf="loading; else dialogueslist">
+        <img [src]="randomLoader()" class="loader" *ngIf="loading">
         <div *ngIf="!loading">
           <div #dialogueslist *ngFor="let dialogue of dialogues" class="dialogue">
             [{{dialogue.order + 1}}] <b>{{dialogue.character.rawName}}:</b> {{dialogue.text}}

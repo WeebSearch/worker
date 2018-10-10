@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import { Router } from '@angular/router';
 import gql from 'graphql-tag';
+import { random } from '../utils';
 
 
 interface Episode {
@@ -45,6 +46,8 @@ interface Anime {
 
 export class AnimeViewerComponent implements OnInit {
 
+  public loaders = new Array(11).fill(0).map((_, i) => `assets/loaders/loader${i + 1}.gif`);
+
   animeName: string;
   episodes: Episode[];
   /**
@@ -64,6 +67,8 @@ export class AnimeViewerComponent implements OnInit {
 
   ngOnInit() {
   }
+
+  randomLoader = () => random(this.loaders);
 
   queryDialogues = (episodeId: string) => {
     console.log('querying dialogues');
@@ -119,7 +124,7 @@ export class AnimeViewerComponent implements OnInit {
       this.episodes = res.data.episodes;
       if (this.episodes.length) {
         this.episode = this.episodes[0];
-        this.previewEpisode(this.episode.episodeNumber)
+        this.previewEpisode(this.episode.episodeNumber);
       }
       this.queryDialogues(this.episodes[0].id);
       console.log(this.episodes);

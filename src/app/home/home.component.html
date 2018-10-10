@@ -1,5 +1,8 @@
-<div class="container-fluid" style="text-align: center">
+<div class="header-wrapper">
+  <img class="home-header" src="assets/header3.png" alt="">
   <h1 class="title">WeebSearch</h1>
+</div>
+<div class="container-fluid" style="text-align: center">
   <div class="anime-container">
     <ng-template *ngIf="!animes || !animes.length">Whoa couldn't find anything</ng-template>
     <div class="anime-card" *ngFor="let anime of animes" [routerLink]="[animeLink(anime.rawName)]">
