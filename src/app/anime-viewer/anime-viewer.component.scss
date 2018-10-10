@@ -96,6 +96,10 @@ $secondary-background: #20232a;
   }
 }
 
+.character-list {
+  text-align: left;
+}
+
 .loader {
   margin: 0 auto;
   max-height: 200px;
@@ -104,4 +108,8 @@ $secondary-background: #20232a;
 
 .dialogues {
   text-align: left;
+}
+
+.speaker-thumbnail {
+  max-height: 20px;
 }
