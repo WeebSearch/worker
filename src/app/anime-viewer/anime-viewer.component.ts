@@ -60,9 +60,10 @@ export class AnimeViewerComponent implements OnInit {
   anime: Anime;
   animeId?: string;
   loaderPlaying = false;
-  loading = true;
+  loading: boolean;
 
   constructor(public router: Router, public apollo: Apollo) {
+    this.loading = true;
     this.animeName = this.router.url.split('/').pop();
     this.queryAnimes();
   }
@@ -80,6 +81,7 @@ export class AnimeViewerComponent implements OnInit {
   getDialogueSpeaker = (dialogue: Dialogue) => this.characters[dialogue.character.id];
 
   queryEpisode = (episodeId: string) => {
+    console.log(episodeId);
     console.log('querying dialogues');
     this.apollo.query<{ episode: Episode }>({
       query: gql`
@@ -109,19 +111,18 @@ export class AnimeViewerComponent implements OnInit {
       }
     }).subscribe(res => {
       console.log(res);
-      this.loading = false;
-      this.loaderPlaying = false;
-      const { dialogues, characters } = res.data.episode;
-      this.dialogues = dialogues;
-
-      this.colors = DEFAULT_COLORS.splice(0, characters.length - 1);
-      this.characters = characters.reduce((map: {}, char: Character, i: number) => {
-        map[char.id] = {
-          ...char,
-          color: this.colors[i]
-        };
+      const { dialogues, characters: chars } = res.data.episode;
+      console.log(dialogues);
+      this.colors = DEFAULT_COLORS.slice(0, chars.length);
+      this.characters = chars.reduce((map: {}, char: Character, i: number) => {
+        const color = this.colors[i];
+        map[char.id] = { ...char, color };
         return map;
       }, {});
+      this.dialogues = dialogues;
+      console.log(this.dialogues);
+      this.loading = false;
+      this.loaderPlaying = false;
     });
   }
 
@@ -169,6 +170,10 @@ export class AnimeViewerComponent implements OnInit {
   }
 
   getSpeakerName = (character: Character) => {
+    if (!character) {
+      return '__UNKNOWN__';
+      // return this.characterList().find(char => char.rawName === '__UNKNOWN__')
+    }
     if (character.name) {
       return character.name;
     }
@@ -213,7 +218,7 @@ export class AnimeViewerComponent implements OnInit {
 
   }
 
-  loadSubs = (id: string) => {
+  loadSubs = (id: string, episodeIndex) => {
     this.loading = true;
     this.queryEpisode(id);
   }

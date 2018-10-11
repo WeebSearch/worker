@@ -8,7 +8,7 @@
     <div class="anime-card" *ngFor="let anime of animes" [routerLink]="[animeLink(anime.rawName)]">
       <div class="title-container"><h1>{{anime.rawName}}</h1></div>
       <div class="thumbnail-container">
-        <img class="anime-thumbnail" [src]="anime.thumbnailUrl"><!--src="assets/shrugs/shrug2.png"> -->
+        <img class="anime-thumbnail" [src]="anime.thumbnailUrl || randomThumbnailPlaceholder()"><!--src="assets/shrugs/shrug2.png"> -->
       </div>
       <div class="anime-footer">
         <p><b>{{anime.characters.length}}</b> characters</p>

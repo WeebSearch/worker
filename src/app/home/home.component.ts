@@ -3,6 +3,7 @@ import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { random } from '../utils';
 
 interface Anime {
   id: string;
@@ -18,6 +19,7 @@ interface Anime {
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+  public animes: Anime[];
   public missingThumbnailPlaceholders = [
     'shrug1.jpg',
     'shrug2.png',
@@ -27,7 +29,7 @@ export class HomeComponent implements OnInit {
     'shrug6.png',
   ].map(file => `assets/shrugs/${file}`);
 
-  public animes: Anime[];
+  public randomThumbnailPlaceholder = () => random(this.missingThumbnailPlaceholders);
 
   constructor(public apollo: Apollo, public router: Router) {
     this.apollo.query<{ animes: Anime[] }>({

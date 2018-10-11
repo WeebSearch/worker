@@ -12,7 +12,7 @@
   <div class="episode-container">
     <h2 class="episode-label">Episodes</h2>
     <div class="episode-list">
-      <button *ngFor="let ep of episodes"
+      <button *ngFor="let ep of episodes; index as i"
               class="episode-button btn btn-info"
               (click)="loadSubs(ep.id)"
               (mouseenter)="previewEpisode(ep.episodeNumber)">
@@ -30,7 +30,7 @@
         <div *ngIf="!loading">
           <div #dialogueslist *ngFor="let dialogue of dialogues" class="dialogue">
             <!--<img class="speaker-thumbnail" [src]="" alt="">-->
-            <p [style.background-color]="getDialogueSpeaker(dialogue).color">[{{dialogue.order + 1}}] <b>{{getSpeakerName(characters[dialogue.character.id])}}:</b> {{dialogue.text}}</p>
+            <p [style.background-color]="getDialogueSpeaker(dialogue)?.color">[{{dialogue.order + 1}}] <b>{{getSpeakerName(characters[dialogue.character.id])}}:</b> {{dialogue.text}}</p>
           </div>
         </div>
       </div>
