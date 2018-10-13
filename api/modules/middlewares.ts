@@ -1,6 +1,8 @@
 import { Context } from "../utils";
-import {isOwner, isUserAuthorized, isUserLoggedIn} from "./auth";
+import { isOwner, isUserAuthorized, isUserLoggedIn } from "./auth";
 import { checkLimited, rateLimit } from "./ratelimit";
+export { limitRedis } from "./ratelimit";
+
 /**
  * Checks authorization for
  * @param resolve
@@ -39,7 +41,7 @@ export const rateLimiting = async (resolve, root, args, ctx: Context, info) => {
 
 export const auth = {
   Query: {
-    dialogues: isUserAuthorized,
+    // dialogues: isUserAuthorized,
     profile: isUserAuthorized
   }
 };

@@ -1,37 +1,51 @@
-import * as bcrypt from "bcryptjs";
-import { AuthResponse, LoginCredentials } from "../interfaces/query";
-import { Context, signJwt } from "../utils";
+import { Context } from "../utils";
+
+interface DialoguesQueryInput {
+  search: string;
+  episodeId: string;
+  episodeName: string;
+}
 
 export const dialogueQuery = {
   async dialogues(
     _,
-    { search, anime }: { search: string; anime: string },
+    { search, episodeId, episodeName }: DialoguesQueryInput,
     ctx: Context,
     info
   ) {
     // this
+    let query;
+
+    if (episodeId) {
+      query = { episode: { id: episodeId } }
+    } else if (episodeName) {
+      query = { anime: { rawName: episodeName } }
+    } else if (search) {
+      // TODO: change this to solr searching
+      query = { character: {
+        OR: [
+          {
+            rawName_contains: search
+          },
+          {
+            name_contains: search
+          }
+        ]
+      }}
+    }
+    else {
+      throw new Error('No valid input given')
+    }
     const dialogue = await ctx.db.query.dialogues(
       {
         where: {
-          character: {
-            OR: [
-              {
-                rawName_contains: search
-              },
-              {
-                name_contains: search
-              }
-            ]
-          },
-          anime: {
-            OR: []
-          }
+          ...query
         },
         orderBy: "order_ASC",
-        first: 100
+        // first: 100
       },
       info
     );
     return dialogue;
   }
-};
+}

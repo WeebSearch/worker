@@ -22,10 +22,11 @@ type AuthResponse {
 }
 
 type Query {
-  dialogues(search: String): [Dialogue!]!
+  dialogues(search: String episodeId: ID episodeName: String): [Dialogue!]!
   anime(name: String!): Anime
   animes(search: String id: ID): [Anime!]!
   episodes(animeId: ID!): [Episode!]!
+  episode(episodeId: ID!): Episode
   profile: Profile!
 }
 

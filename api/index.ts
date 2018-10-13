@@ -1,9 +1,10 @@
 import * as dotenv from "dotenv";
-import {GraphQLServer} from "graphql-yoga";
-import {Prisma} from "./generated/prisma";
-import {auth, rateLimiting} from "./modules/middlewares";
-import {sess} from "./modules/session";
-import {resolvers} from "./resolvers";
+import { GraphQLServer } from "graphql-yoga";
+import * as helmet from 'helmet'
+import { Prisma } from "./generated/prisma";
+import { auth, limitRedis } from "./modules/middlewares";
+import { sess } from "./modules/session";
+import { resolvers } from "./resolvers";
 
 dotenv.config();
 
@@ -18,15 +19,17 @@ const server = new GraphQLServer({
     })
   }),
   resolvers,
-  middlewares: [rateLimiting, auth],
+  middlewares: [auth],
   typeDefs: "./api/schema.graphql"
 });
 
 server.express.use(sess);
+server.express.use(limitRedis);
+server.express.use(helmet());
 
 const cors = {
   credentials: true,
-  origin: "*"
+  origin: "http://localhost:4200"
 };
 
-server.start({cors}, () => console.log(`Server is running on http://localhost:4000`));
+server.start({ cors }, () => console.log(`Server is running on http://localhost:4000`));

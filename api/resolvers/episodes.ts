@@ -19,5 +19,20 @@ export const episodesQuery = {
       info
     );
     return dialogue;
+  },
+  async episode(
+    _,
+    { episodeId: id }: { episodeId: string },
+    ctx: Context,
+    info
+  ) {
+    return ctx.db.query.episode(
+      {
+        where: {
+          id
+        },
+      },
+      info
+    );
   }
 }

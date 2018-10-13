@@ -27,6 +27,7 @@ type Anime {
   rawName: String! @unique
   name: String
   thumbnailUrl: String
+  bannerUrl: String
   characters: [Character!]!
   episodes: [Episode!]!
   dialogues: [Dialogue!]!
@@ -80,6 +81,7 @@ type Episode {
   anime: Anime!
   season: Season
   file: File! @unique
+  displayName: String
   # not always parsed as numbers
   episodeNumber: String
   length: Int!
