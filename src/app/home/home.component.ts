@@ -25,9 +25,12 @@ export class HomeComponent implements OnInit {
     'shrug2.png',
     'shrug3.png',
     'shrug4.png',
-    'shrug5.jpg',
+    // 'shrug5.jpg',
+    'shrugsparent.png',
     'shrug6.png',
   ].map(file => `assets/shrugs/${file}`);
+
+  public placeholders: string[] = [];
 
   public randomThumbnailPlaceholder = () => random(this.missingThumbnailPlaceholders);
 
@@ -49,7 +52,9 @@ export class HomeComponent implements OnInit {
         }
       `,
     }).pipe(map(res => res.data.animes)).subscribe(items => {
+      // const unknownAnimes = items.filter(anime => !anime.thumbnailUrl).length;
       this.animes = items.sort((a, b) => a.rawName > b.rawName ? -1 : 1);
+      this.placeholders = this.animes.map(this.randomThumbnailPlaceholder);
     });
   }
 

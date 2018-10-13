@@ -3,16 +3,24 @@
     <div class="navbar-expand mr-auto">
       <div class="navbar-nav">
         <div class="left vl" style="margin-right: 10px;">
-          <img *ngIf="auth.authed as logged" src="assets/pfp.gif" alt="" class="avatar" (click)="debug()">
-          <div *ngIf="!auth.authed && !auth.loading" src="assets/default.jpg" class="links"><a class="nav-item nav-link">Login</a></div>
+          <a [routerLink]="['/profile']">
+            <img *ngIf="auth.authed as logged" src="assets/pfp.gif" alt="" class="avatar link" (click)="debug()">
+          </a>
         </div>
 
         <div class="links">
-          <a *ngFor="let link of links; index as i" class="nav-item nav-link"
-             (hover)="highlight(index)"
-             [routerLink]="link.link">
-            {{link.name}}
-          </a>
+          <a class="nav-item nav-link link" [routerLink]="['/']">Home</a>
+          <a class="nav-item nav-link link" [routerLink]="['/profile']">Profile</a>
+          <a class="nav-item nav-link link" [routerLink]="['/animes']">Animes</a>
+          <a class="nav-item nav-link link" [routerLink]="['/editor']">Editor</a>
+          <a *ngIf="!auth.authed" class="nav-item nav-link" [routerLink]="['/login']">Login</a>
+          <!--<a #logout class="nav-item nav-link" [routerLink]="['/login']">Logout</a>-->
+
+          <!--<a class="nav-item nav-link" [routerLink]="['/profile']">Profile</a>-->
+          <!--<a *ngFor="let link of links; index as i" class="nav-item nav-link"-->
+             <!--(hover)="highlight(i)"-->
+             <!--[routerLink]="link.link">-->
+          <!--</a>-->
         </div>
       </div>
     </div>

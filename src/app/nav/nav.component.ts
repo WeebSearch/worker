@@ -25,7 +25,7 @@ export class NavComponent implements OnInit {
   ];
 
   constructor(public auth: AuthService, private router: Router) {
-    auth.isAuthenticated$().subscribe(console.log);
+    auth.getProfile$().subscribe(console.log);
   }
 
 

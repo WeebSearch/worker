@@ -1,3 +1,5 @@
+import { Anime, Episode, Evaluation } from './types';
+
 export function* range(end: number) {
   let iter = 0;
   while (iter-- < end) {
@@ -29,3 +31,44 @@ export const DEFAULT_COLORS = [
   '#104020',
   '#16060d',
 ];
+export const evaluateEpisode = (episode: Episode) => {
+  const evaluation: Evaluation[] = [];
+
+  // const maxDialogueLength;
+  if (!episode.characters.length) {
+    evaluation.push({ text: 'Has NO characters', pass: false });
+  } else if (episode.characters.length) {
+
+  }
+  return evaluation;
+};
+
+export const evaluateAnime = (anime: Anime) => {
+  const evaluation: Evaluation[] = [];
+
+  if (!anime.anilistId) {
+    evaluation.push({ text: 'No anilist ID', pass: false });
+  } else {
+    evaluation.push({ text: 'Has anilist ID', pass: true });
+  }
+
+  if (!anime.malId) {
+    evaluation.push({ text: 'No MAL ID', pass: false });
+  } else {
+    evaluation.push({ text: 'Has MAL ID', pass: true });
+  }
+
+  if (!anime.name) {
+    evaluation.push({ text: 'Has no confirmed name', pass: false });
+  } else {
+    evaluation.push({ text: 'Has a confirmed name', pass: true });
+  }
+
+  return evaluation;
+};
+
+function* getNextThumbnail(placeholders) {
+  for (const placeholder of placeholders) {
+    yield placeholder;
+  }
+}

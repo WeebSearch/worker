@@ -5,14 +5,19 @@
   <div class="title-column">
     <div class="badges"></div>
     <h1>{{anime?.rawName}}</h1>
+    <div *ngIf="anime" class="anime-checklist">
+      <ul>
+        <li *ngFor="let evaluation of animeChecklist()">{{evaluation.text}}</li>
+      </ul>
+    </div>
   </div>
-  <img class="anime-thumbnail" [src]="anime?.thumbnailUrl" alt="">
+  <img *ngIf="anime?.thumbnailUrl" class="anime-thumbnail" [src]="anime?.thumbnailUrl" alt="">
 </div>
 <div class="container-fluid" style="text-align: center;">
   <div class="episode-container">
     <h2 class="episode-label">Episodes</h2>
     <div class="episode-list">
-      <button *ngFor="let ep of episodes; index as i"
+      <button *ngFor="let ep of episodes"
               class="episode-button btn btn-info"
               (click)="loadSubs(ep.id)"
               (mouseenter)="previewEpisode(ep.episodeNumber)">
@@ -20,6 +25,11 @@
       </button>
     </div>
     <h3 class="episode-name">{{episodeNamePreview}}</h3>
+    <div *ngIf="episode" class="episode-checklist">
+      <ul>
+        <li *ngFor="let evaluation of episodeChecklist()">{{evaluation.text}}</li>
+      </ul>
+    </div>
   </div>
 
   <div class="anime-grid">

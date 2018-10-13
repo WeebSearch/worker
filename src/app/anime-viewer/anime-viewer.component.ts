@@ -2,39 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import { Router } from '@angular/router';
 import gql from 'graphql-tag';
-import { DEFAULT_COLORS, random } from '../utils';
+import {DEFAULT_COLORS, evaluateAnime, evaluateEpisode, random} from '../utils';
+import { Anime, Character, Dialogue, Episode } from '../types';
 
-interface Character {
-  id: string;
-  name?: string;
-  rawName?: string;
-  thumbnailUrl?: string;
-  color: string;
-}
 
-interface Episode {
-  id: string;
-  episodeNumber: string;
-  file: {
-    fileName: string;
-  };
-  anime: Anime;
-  characters: Character[];
-  dialogues: Dialogue[];
-}
-
-interface Dialogue {
-  text: string;
-  order: string;
-  character: Character;
-}
-
-interface Anime {
-  id: string;
-  name?: string;
-  rawName: string;
-  thumbnailUrl?: string;
-}
 
 @Component({
   selector: 'app-anime-viewer',
@@ -63,6 +34,7 @@ export class AnimeViewerComponent implements OnInit {
   loading: boolean;
 
   constructor(public router: Router, public apollo: Apollo) {
+    console.log(this.router.events.subscribe(console.log));
     this.loading = true;
     this.animeName = this.router.url.split('/').pop();
     this.queryAnimes();
@@ -76,7 +48,9 @@ export class AnimeViewerComponent implements OnInit {
     return random(this.loaders);
   }
 
-  characterList = (): Character[] => Object.values(this.characters);
+  characterList = (): Character[] => this.characters ? Object.values(this.characters) : [];
+  episodeChecklist = () => evaluateEpisode(this.episode);
+  animeChecklist = () => evaluateAnime(this.anime);
 
   getDialogueSpeaker = (dialogue: Dialogue) => this.characters[dialogue.character.id];
 
@@ -153,6 +127,7 @@ export class AnimeViewerComponent implements OnInit {
       this.episodes = res.data.episodes;
       if (this.episodes.length) {
         this.episode = this.episodes[0];
+        console.log(this.animeChecklist())
         this.previewEpisode(this.episode.episodeNumber);
       }
       this.queryEpisode(this.episodes[0].id);
@@ -181,9 +156,6 @@ export class AnimeViewerComponent implements OnInit {
   }
 
   getCharacterListItem = (character: Character) => {
-    if (character.rawName === '__UNKNOWN__') {
-      return '???';
-    }
     if (character.name) {
       return `${character.name} [${character.rawName}]`;
     }
@@ -218,7 +190,7 @@ export class AnimeViewerComponent implements OnInit {
 
   }
 
-  loadSubs = (id: string, episodeIndex) => {
+  loadSubs = (id: string) => {
     this.loading = true;
     this.queryEpisode(id);
   }
@@ -226,4 +198,5 @@ export class AnimeViewerComponent implements OnInit {
   previewEpisode = (episodeNumber: string) => {
     this.episodeNamePreview = `Episode: ${episodeNumber}`;
   }
+
 }

@@ -9,6 +9,8 @@
   min-width: 100%;
   max-height: 100%;
   margin: -10% auto;
+    -webkit-mask-image: -webkit-gradient(linear, left top, left bottom,
+      from(rgba(0, 0, 0, 1)), to(rgba(0, 0, 0, 0)));
 }
 .title {
   margin: 10% auto;
