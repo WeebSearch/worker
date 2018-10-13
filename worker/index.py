@@ -23,7 +23,7 @@ async def main():
     # parser = init_cli()
     # print(parser.parse_args(sys.argv[1:]))
 
-    rar_path = Path('downloads/New_Game_TV_2016_Eng.rar')
+    rar_path = Path('downloads/New_Game_TV2_2017_Eng.rar')
     await process_download(rar_path,
                            link_url='http://subs.com.ru/page.php?id=44106&a=dl', delete=False)
 

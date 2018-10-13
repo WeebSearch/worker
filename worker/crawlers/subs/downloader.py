@@ -32,7 +32,7 @@ def download_archives(urls: List[str], cookie: str) -> None:
     }
 
     # test mode download
-    new_urls = urls
+    new_urls = urls[1:3]
     session = FuturesSession()
     logger.info(f'Downloading {len(new_urls)} files...')
 

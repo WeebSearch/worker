@@ -14,7 +14,7 @@ def setup_redis():
         host='localhost',
         port=6379,
         charset='utf-8',
-        # decode_responses=False
+        # decode_responses=True
     )
 
 

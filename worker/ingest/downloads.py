@@ -162,6 +162,7 @@ async def process_archive(archive_path: Path, link_url: str, delete=True, sess=N
                                    archive_id=existing_id)
 
         except Exception as e:
+            logger.error(e)
             raise e
             return
 

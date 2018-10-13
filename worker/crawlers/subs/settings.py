@@ -29,8 +29,8 @@ sys.path.insert(
 
 BOT_NAME = 'subs'
 
-SPIDER_MODULES = ['src.crawlers.subs.spiders']
-NEWSPIDER_MODULE = 'src.crawlers.subs.spiders'
+SPIDER_MODULES = ['worker.crawlers.subs.spiders']
+NEWSPIDER_MODULE = 'worker.crawlers.subs.spiders'
 
 # Crawl responsibly by identifying yourself
 # (and your website) on the user-agent

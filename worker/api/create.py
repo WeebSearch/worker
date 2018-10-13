@@ -54,6 +54,9 @@ async def create_file_and_episode(
 
     data = extract(await result.json(), 'data', 'createFile')
 
+    if data is None:
+        return
+
     file_id = data['id']
     ep_id = data['episode']['id']
 
