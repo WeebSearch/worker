@@ -3,7 +3,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { Apollo } from 'apollo-angular';
 import { Observable } from 'rxjs';
 import gql from 'graphql-tag';
-import { debounceTime, map } from 'rxjs/operators';
+import { debounceTime, map, tap } from 'rxjs/operators';
 import { CookieService } from 'ngx-cookie-service';
 import { Profile } from '../types';
 import { ApolloQueryResult } from 'apollo-client';
@@ -71,6 +71,23 @@ export class AuthService {
       fetchPolicy: 'no-cache'
     }).pipe(
       map(result => result.data.signIn.successful)
+    );
+  }
+
+  public logout = (): Observable<any> => {
+    console.log('attempting to logout ')
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation LogoutMutation {
+          logout {
+            successful
+          }
+        }
+      `,
+      fetchPolicy: 'no-cache'
+    }).pipe(
+      tap(() => console.log('asd')),
+      tap(console.log)
     );
   }
 
