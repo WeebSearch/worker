@@ -67,9 +67,9 @@ them? Stop asking so many questions.
 
 - [ ] Redis integration for caching user queries
 
-### Frontend (React & TS)
+### Frontend (Angular & TS)
 
-- [ ] Start a website with React
+- [ ] Start a website with Angular
 
 - [ ] Create a web-based transcript editor to fix parsing mistakes or add new information
     
