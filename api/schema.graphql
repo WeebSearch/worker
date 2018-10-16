@@ -34,4 +34,5 @@ type Mutation {
   auth(token: String!): AuthResponse
   signIn(email: String!, password: String!): AuthResponse
   signUp(email: String!, password: String!, name: String!): AuthResponse
+  logout: AuthResponse
 }

@@ -1,7 +1,9 @@
 import * as bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
+import { promisify } from "util";
 import { AuthResponse, LoginCredentials } from "../../interfaces/query";
 import { Context, signJwt } from "../../utils";
+
 
 export const authMutation = {
   async signUp(
@@ -90,5 +92,24 @@ export const authMutation = {
     return {
       successful: true,
     };
-  }
+  },
+  async logout(
+    parent,
+    {},
+    ctx: Context
+  ): Promise<AuthResponse> {
+    return new Promise((resolve, reject) => {
+      if (!ctx.request.session.userId) {
+        return resolve({ successful: false });
+      }
+      // const destroySessionAsync = promisify(ctx.request.destroy)
+      // const result = await destroySessionAsync();
+      ctx.request.session.destroy((err) => {
+        if (err) {
+          return resolve({ successful: false })
+        }
+        return resolve({ successful: true })
+      })
+    })
+  },
 };
