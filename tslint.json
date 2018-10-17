@@ -17,7 +17,8 @@
 		"no-console": false,
 		"interface-name": [true, "never-prefix"],
     "object-curly-spacing": true,
-		"object-literal-sort-keys": false
+		"object-literal-sort-keys": false,
+    "semicolon": [true, "always"]
 	},
 	"rulesDirectory": [
 		"node_modules/tslint-eslint-rules/dist/rules"
