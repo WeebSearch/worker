@@ -2,7 +2,7 @@ export declare type QuerySelector = string;
 
 export interface SpiderOptions {
   targets: string[];
-  selectors: QuerySelector[];
+  selector: QuerySelector;
   limit?: number;
   callback: (info: SpiderCallback) => Promise<void>;
   paginate?: QuerySelector;
@@ -16,5 +16,6 @@ export interface SpiderOptions {
 // }
 
 export interface SpiderCallback {
-  selections: string[];
+  cookie: string;
+  selections: CheerioElement[];
 }

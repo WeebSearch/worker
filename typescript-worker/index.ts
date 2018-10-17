@@ -1,2 +1,6 @@
 // import './ingest/subs'
-import './crawler/crawl';
+
+
+import { crawlSubsComRu } from "./crawler/crawl";
+
+crawlSubsComRu();
