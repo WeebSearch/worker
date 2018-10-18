@@ -13,6 +13,7 @@ interface UnrarOptions {
   deleteAfter: boolean;
 }
 
+
 /**
  * Unrars a file, optionally deleting it afterwards
  *
@@ -22,9 +23,10 @@ interface UnrarOptions {
  * @returns Promise<string[]> - path of all the extracted files
  */
 export const unrar = async (
-  location: string, options?: UnrarOptions
-): Promise<string[]> => new Promise(async (res, rej) => {
-  const { deleteAfter = false } = options;
+  location: string, options: UnrarOptions = { deleteAfter: false }
+) => new Promise<string[]>(async (res, rej) => {
+  const { deleteAfter } = options;
+
   const fileName = location.split('/').pop();
   const cleanName = fileName.split('.').shift();
   unpacker.unpack(location, {

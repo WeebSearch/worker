@@ -52,8 +52,9 @@ const crawl = async (options: SpiderOptions): Promise<void> => {
   );
 
   const selections = getLinks(axiosResponse);
+
+  // TODO: this maybe could cause problems with later crawlers?
   const cookie = axiosResponse.headers['set-cookie'];
-  // @ts-ignore
   await callback({ selections, cookie });
 
   return crawl({ ...options, targets: tail });

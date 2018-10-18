@@ -62,7 +62,7 @@ const filterUsableTexts: (arr: AssDialogue[]) => AssDialogue[] = R.filter(isText
 
 type FileToDialogues = (content: string) => AssDialogue[];
 
-const processFileContent: FileToDialogues = R.pipe(
+export const processFileContent: FileToDialogues = R.pipe(
   parseSub,
   getSubDialogues,
   filterUsableTexts,
