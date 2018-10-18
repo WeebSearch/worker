@@ -4,10 +4,16 @@
     "moduleResolution": "node",
     "module": "commonjs",
     "sourceMap": true,
-    "rootDir": "api",
+    "rootDirs": [
+      "api",
+      "typescript-worker"
+    ],
     "outDir": "dist",
     "lib": [
       "esnext", "dom"
     ]
-  }
+  },
+  "exclude": [
+    "node_modules"
+  ]
 }
