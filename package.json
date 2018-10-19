@@ -4,7 +4,7 @@
 		"start": "dotenv -- nodemon -e ts,graphql -x ts-node api/index.ts",
 		"subs": "ts-node typescript-worker/index.ts",
 		"dev": "npm-run-all --parallel start playground",
-		"test": "tsc && jest",
+		"test": "tsc && jest --config=jest.config.js --env node",
 		"debug": "dotenv -- nodemon -e ts,graphql -x ts-node --inspect api/index.ts",
 		"playground": "graphql playground",
 		"build": "rimraf dist && tsc",
