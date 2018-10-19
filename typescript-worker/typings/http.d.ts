@@ -21,3 +21,12 @@ export interface MalHintSearchResponse {
     items: MalHintItems[];
   }>;
 }
+
+export interface AnilistCharacterResponse {
+  id: string;
+  name: {
+    first?: string;
+    last?: string;
+    native?: string;
+  };
+}
