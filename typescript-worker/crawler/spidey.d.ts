@@ -4,7 +4,7 @@ export interface SpiderOptions {
   targets: string[];
   selector: QuerySelector;
   limit?: number;
-  callback: (info: SpiderCallback) => Promise<void>;
+  callback: (info: SpiderCallback) => Promise<any>;
   paginate?: QuerySelector;
   respectRobotsTxt?: boolean;
   // userAgent: string;
@@ -18,4 +18,5 @@ export interface SpiderOptions {
 export interface SpiderCallback {
   cookie: string;
   selections: CheerioElement[];
+  processFiles: boolean;
 }

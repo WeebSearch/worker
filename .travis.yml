@@ -2,5 +2,6 @@ language: node.js
 # command to install dependencies
 install:
   - npm install
+  - npm run build
 script:
   - npm test

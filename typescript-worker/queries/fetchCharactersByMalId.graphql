@@ -1,0 +1,14 @@
+query ($id: Int){
+  Media(idMal: $id, type: ANIME) {
+    characters {
+      nodes {
+        id
+        name {
+          first
+          last
+          native
+        }
+      }
+    }
+  }
+}

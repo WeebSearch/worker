@@ -1,8 +1,5 @@
 import { compile, parse } from 'ass-compiler';
-import * as fs from "fs";
 import * as R from 'ramda';
-import { promisify } from "util";
-import { toPromise } from "../tools/utils";
 import { AssDialogue, AssFile } from "../typings/ass-parser";
 import { readSub, unrar } from "./file";
 
@@ -15,29 +12,30 @@ import { readSub, unrar } from "./file";
  * Hard newline: \N
  */
 const CONTROL_CHARACTER_REGEX = /({\\.+?}|\\N)/g;
+const DEFAULT_SPEAKER = '__UNKNOWN__';
 
-const INVALID_SPEAKERS = Object.freeze([
+export const INVALID_SPEAKERS = Object.freeze([
   'on-screen'
 ]);
 
-const INVALID_STYLES = Object.freeze([
+export const INVALID_STYLES = Object.freeze([
   'Sign',
   'OP',
   'ED'
 ]);
 
-const parseSub: (content: string) => AssFile = parse;
+export const parseSub: (content: string) => AssFile = parse;
 
-const getSubDialogues = (file: AssFile): AssDialogue[] => file.events.dialogue;
+export const getSubDialogues = (file: AssFile): AssDialogue[] => file.events.dialogue;
 
 
-const isValidStyle = (dialogue: AssDialogue) =>
-  INVALID_STYLES.map(R.toLower).every(speaker => R.toLower(speaker) !== dialogue.Style);
+export const isValidStyle = (dialogue: AssDialogue) =>
+  INVALID_STYLES.every(speaker => R.toLower(speaker) !== R.toLower(dialogue.Style));
 
-const isValidSpeaker = (dialogue: AssDialogue) =>
-  INVALID_SPEAKERS.map(R.toLower).every(speaker => R.toLower(speaker) !== dialogue.Name);
+export const isValidSpeaker = (dialogue: AssDialogue) =>
+  INVALID_SPEAKERS.every(speaker => R.toLower(speaker) !== R.toLower(dialogue.Name));
 
-const filterText = (text: AssDialogue) => {
+export const filterText = (text: AssDialogue) => {
   text.Text.combined = text.Text.combined.replace(CONTROL_CHARACTER_REGEX, '');
   return text;
 };
@@ -55,10 +53,10 @@ const lineConditions = (dialogue: AssDialogue) => {
   ];
 };
 
-const isTextUsable = (dialogue: AssDialogue): boolean =>
+export const isTextUsable = (dialogue: AssDialogue): boolean =>
   lineConditions(dialogue).every(func => func());
 
-const filterUsableTexts: (arr: AssDialogue[]) => AssDialogue[] = R.filter(isTextUsable);
+export const filterUsableTexts: (arr: AssDialogue[]) => AssDialogue[] = R.filter(isTextUsable);
 
 type FileToDialogues = (content: string) => AssDialogue[];
 
@@ -71,10 +69,23 @@ export const processFileContent: FileToDialogues = R.pipe(
 
 type PathToDialoguesAsync = (path: string) => Promise<AssDialogue[]>;
 
-const processFilePathAsync: PathToDialoguesAsync = R.pipeP(
+export const processFilePathAsync: PathToDialoguesAsync = R.pipeP(
   readSub,
   async sub => processFileContent(sub)
 );
+
+export const orderBySpeaker = R.reduce((acc: { [name: string]: AssDialogue[] }, dialogue: AssDialogue) => {
+  const name = dialogue.Name || DEFAULT_SPEAKER;
+  if (!acc[name]) {
+    acc[name] = [];
+  }
+  acc[name].push(dialogue);
+  return acc;
+}, {});
+
+export const parseDialogues = (dialogues: AssDialogue[]) => {
+
+};
 
 (async () => {
   // console.log(Rar)
@@ -85,7 +96,6 @@ const processFilePathAsync: PathToDialoguesAsync = R.pipeP(
   // console.log(x)
   const bb: string[] = await Promise.all(filePaths.map(readSub));
   // console.log(bb[0])
-
 
 
   const now = Date.now();
