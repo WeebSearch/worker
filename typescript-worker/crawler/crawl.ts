@@ -5,7 +5,6 @@ import { processSubsComRu } from "../ingest/downloader";
 import { RESPECT_ROBOTS_TXT, USER_AGENT } from "./settings";
 import { QuerySelector, SpiderOptions } from "./spidey";
 
-axios.defaults.headers.withCredentials = true;
 /**
  * Allows us to persist cookies
  */
@@ -15,13 +14,6 @@ export const request = axios.create({
   headers: {
     'User-Agent': USER_AGENT
   },
-  // transformResponse: (data, headers) => {
-  //   console.log(headers);
-  //   return data;
-  // },
-  // transformRequest: (data, headers) => {
-  //   console.log(headers);
-  // }
 });
 
 const TO_CRAWL = [
@@ -31,7 +23,6 @@ const TO_CRAWL = [
 const getHtml = (response: AxiosResponse) => response.data;
 
 const filterDownloads = (target: QuerySelector, $: CheerioStatic) => $(target).toArray();
-
 
 const crawl = async (options: SpiderOptions): Promise<void> => {
   const { targets, selector, callback } = options;

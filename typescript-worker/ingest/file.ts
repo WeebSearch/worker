@@ -40,8 +40,8 @@ export const unrar = async (
     const downloadLocation = path.join(BASE_DOWNLOAD_LOCATION, cleanName);
     try {
       const files = await readDirAsnyc(downloadLocation);
-
-      const joinedFiles = files.map(file => path.join(downloadLocation, file));
+      const joinDownloadLocation = R.curry(path.join)(downloadLocation);
+      const joinedFiles = files.map(joinDownloadLocation);
 
       if (deleteAfter) {
         await unlinkAsync(location);
@@ -61,11 +61,7 @@ export const unrar = async (
  *
  * @returns Promise<string> content of the file
  */
-export const readSub = (file: string) => new Promise<string>((resolve, reject) => {
-  fs.readFile(file, (err, data) => {
-    if (err) {
-      return reject(err);
-    }
-    return resolve(data.toString());
-  });
-});
+export const readSub = R.pipeP(
+  promisify(fs.readFile),
+  async (buffer) => buffer.toString(),
+);

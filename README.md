@@ -12,11 +12,11 @@
 #### Why?
 
 Anime is great, and while there's a lot of information out there on anime metadata
-on great sites like [Anilist](http://anilist.co/), there's no 
+on great sites like [Anilist](http://anilist.co/), there's no
 way to know what your favorite characters have said without going through
 all the episodes yourself. What exactly did Aoba say in S1 E1
 of [New Game!](https://anilist.co/anime/21455)? How often did Louise speak
-in the first season of [Familiar of Zero](https://anilist.co/anime/1195/The-Familiar-of-Zero/) 
+in the first season of [Familiar of Zero](https://anilist.co/anime/1195/The-Familiar-of-Zero/)
 compared to the last? ¯\\\_(ツ)\_/¯
 
 These are interesting things to be able to answer. Why do I want to answer
@@ -72,19 +72,19 @@ them? Stop asking so many questions.
 - [ ] Start a website with React
 
 - [ ] Create a web-based transcript editor to fix parsing mistakes or add new information
-    
+
     - Available to users designated as data mods
-    
+
     - Supports:
-    
+
         - Marking lines with the correct speakers [color coded]
-        
+
         - Editing existing character information
-        
-        - Editing episode and character metadata 
-        
+
+        - Editing episode and character metadata
+
         - Deleting unnecessary dialogues and characters (which there are a lot of)
-        
+
         - Merging animes, dialogues, characters and more
 
 
@@ -116,13 +116,13 @@ them? Stop asking so many questions.
 
   - Note: You will **not** be able to commit code that has linter errors.
 
-- `pipenv run test` runs pytest against the tests files
-  - Remember to include tests for new changes
+- `pipenv run test` runs pytest against the __tests__ files
+  - Remember to include __tests__ for new changes
 
-  
+
 <hr>
 
 **Note:**
 
-This service is still a work in progress, meaning any documentation 
+This service is still a work in progress, meaning any documentation
 or service component may change or get added _literally_ overnight

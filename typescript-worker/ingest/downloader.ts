@@ -25,7 +25,6 @@ const downloadUrl = (url: string, cookie) => request.get(url, {
   }
 });
 
-
 export const processSubsComRu = async ({ selections, cookie, processFiles }: SpiderCallback) => {
   const LINK_PREPEND = 'http://subs.com.ru/';
   const extractUrl = response => response.request.res.responseUrl;
