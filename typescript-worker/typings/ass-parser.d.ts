@@ -48,5 +48,9 @@ export interface AssFile {
   events: AssEvents;
 }
 
+interface NameSortedDialogues {
+  [name: string]: AssDialogue[];
+}
+
 export declare function parse(content: string): AssFile;
 

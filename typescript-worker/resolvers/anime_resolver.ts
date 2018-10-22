@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
+import * as R from 'ramda';
 import { MalHintSearchResponse } from "../typings/http";
 import { fetchCharactersByMalId } from "./character_resolver";
 
@@ -26,8 +27,8 @@ export const searchMALIdByRawName = async (rawName: string): Promise<number | un
   // MAL Elasticsearch doesn't check full matches, so we check instead
   const fullMatch = animes.find(anime => anime.name.toLowerCase() === rawName.toLowerCase());
 
-  const target =  fullMatch || animes.shift();
+  const target = fullMatch || animes.shift();
   return target.id;
 };
 
-searchMALIdByRawName('New Game!').then(fetchCharactersByMalId).then(console.log);
+// searchMALIdByRawName('New Game!').then(fetchCharactersByMalId).then(R.pipe(JSON.stringify, console.log));

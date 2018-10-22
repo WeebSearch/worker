@@ -1,7 +1,8 @@
 import { compile, parse } from 'ass-compiler';
 import * as R from 'ramda';
-import { AssDialogue, AssFile } from "../typings/ass-parser";
-import { readSub, unrar } from "./file";
+import { AssDialogue, AssFile, NameSortedDialogues } from "../typings/ass-parser";
+import { parseFileName, readSub, unrar } from "./file";
+import { searchMALIdByRawName } from "../resolvers/anime_resolver";
 
 // declare const parse = (content: string): AssFile => parse(content);
 
@@ -83,25 +84,40 @@ export const orderBySpeaker = R.reduce((acc: { [name: string]: AssDialogue[] }, 
   return acc;
 }, {});
 
-export const parseDialogues = (dialogues: AssDialogue[]) => {
 
-};
+export const parseDialogues: (_: AssDialogue[]) =>
+  NameSortedDialogues = R.reduce((acc: NameSortedDialogues, dialogue: AssDialogue) => {
+  const name = dialogue.Name;
+  if (!acc[name]) {
+    acc[name] = [];
+  }
+  acc[name] = [...acc[name], dialogue];
+
+  return acc;
+}, {});
 
 (async () => {
   // console.log(Rar)
-  const target = 'downloads/New_Game_TV_2016_Eng/[HorribleSubs] New Game! - 01 [720p].ass';
-  // console.log(unpack)
+  // const target = 'downloads/New_Game_TV_2016_Eng/[HorribleSubs] New Game! - 01 [720p].ass';
   const archive = 'downloads/New_Game_TV2_2017_Eng.rar';
+  const [group, anime, episode] = parseFileName(archive);
+  // console.log(one);
+  // console.log(two);
+  // console.log(three);
+
+  // console.log(unpack)
   const filePaths = await unrar(archive);
   // console.log(x)
   const bb: string[] = await Promise.all(filePaths.map(readSub));
   // console.log(bb[0])
 
-
   const now = Date.now();
+  // R.chain(processFilePathAsync, filePaths);
   const promises = filePaths.map(processFilePathAsync);
   const filteredDialogues = await Promise.all(promises);
-  console.log(filteredDialogues.pop());
+  // console.log(filteredDialogues.pop());
+  // console.log(filteredDialogues)
+  console.log(parseDialogues(filteredDialogues[0]));
   console.log("time", Date.now() - now);
 
   // console.log(await processFilePathAsync(bb[0]));

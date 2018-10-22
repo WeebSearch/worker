@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as R from 'ramda';
 import * as unpacker from 'unpack-all';
 import { promisify } from "util";
+import { GENERIC_SUB_REGEX } from "./sub_groups";
 
 const BASE_DOWNLOAD_LOCATION = 'downloads';
 
@@ -13,6 +14,8 @@ interface UnrarOptions {
   deleteAfter: boolean;
 }
 
+
+export const extractFileName = (pathName: string) => pathName.split('/').pop();
 
 /**
  * Unrars a file, optionally deleting it afterwards
@@ -27,7 +30,7 @@ export const unrar = async (
 ) => new Promise<string[]>(async (res, rej) => {
   const { deleteAfter } = options;
 
-  const fileName = location.split('/').pop();
+  const fileName = extractFileName(location);
   const cleanName = fileName.split('.').shift();
   unpacker.unpack(location, {
     targetDir: BASE_DOWNLOAD_LOCATION,
@@ -40,8 +43,8 @@ export const unrar = async (
     const downloadLocation = path.join(BASE_DOWNLOAD_LOCATION, cleanName);
     try {
       const files = await readDirAsnyc(downloadLocation);
-      const joinDownloadLocation = R.curry(path.join)(downloadLocation);
-      const joinedFiles = files.map(joinDownloadLocation);
+
+      const joinedFiles = files.map(file => path.join(downloadLocation, file));
 
       if (deleteAfter) {
         await unlinkAsync(location);
@@ -51,17 +54,22 @@ export const unrar = async (
     } catch (e) {
       console.error(e);
       return rej(e);
+
     }
   });
 });
 
-/**
- * Reads in a subtitle to a string from a given path
- * @param file
- *
- * @returns Promise<string> content of the file
- */
-export const readSub = R.pipeP(
-  promisify(fs.readFile),
-  async (buffer) => buffer.toString(),
+export const readSub = (file: string) => new Promise<string>((resolve, reject) => {
+  fs.readFile(file, (err, data) => {
+    if (err) {
+      return reject(err);
+    }
+    return resolve(data.toString());
+  });
+});
+
+export const parseFileName = R.pipe(
+  extractFileName,
+  R.match(GENERIC_SUB_REGEX),
+  R.slice(1, 4)
 );

@@ -1,12 +1,12 @@
 import * as R from "ramda";
 
-const GENERIC_SUB_REGEX = /\[(.+)\] (.+) - (.+?) [\[(]/;
+export const GENERIC_SUB_REGEX = /\[(.+)\] (.+) - (.+?) [\[(]/;
 
-const BLACKLISTED_GROUPS = Object.freeze([
+export const BLACKLISTED_GROUPS = Object.freeze([
   '__PLACEHOLDER__'
 ]);
 
-const VALID_FILE_TYPES = Object.freeze([
+export const VALID_FILE_TYPES = Object.freeze([
   '.ass'
 ]);
 
