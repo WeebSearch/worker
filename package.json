@@ -5,13 +5,14 @@
 		"subs": "ts-node typescript-worker/index.ts",
 		"dev": "npm-run-all --parallel start playground",
 		"test": "tsc && jest --config=jest.config.js --env node",
+    "test:worker": "tsc -p typescript-worker && jest --projects typescript-worker --config=jest.config.js --env node",
+    "test:api": "tsc -p api && jest --projects typescript-worker --config=jest.config.js --env node",
 		"debug": "dotenv -- nodemon -e ts,graphql -x ts-node --inspect api/index.ts",
 		"playground": "graphql playground",
 		"build": "rimraf dist && tsc",
 		"tslint-check": "tslint-config-prettier-check ./tslint.json"
 	},
 	"dependencies": {
-		"@fortawesome/angular-fontawesome": "^0.2.1",
 		"apollo-server": "^2.1.0",
 		"ass-compiler": "0.0.9",
 		"axios": "^0.18.0",
