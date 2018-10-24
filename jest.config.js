@@ -1,6 +1,7 @@
 module.exports = {
   projects: [
-    "jest.worker.js"
+    "typescript-worker/jest.worker.js",
+    "api/jest.api.js"
   ]
 };
 
