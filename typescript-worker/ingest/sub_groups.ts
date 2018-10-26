@@ -83,7 +83,7 @@ export const findBestSubGroup = (tallied: Tallied): string =>
     const multiplier = SUB_GROUP_WEIGHTS[key] || DEFAULT_SUB_GROUP_WEIGHT;
     const worth = value * multiplier;
     if (worth > amount) {
-      coll = [key, value];
+      coll = [key, worth];
     }
     return coll;
   }, ["UNKNOWN", -1])[0];
@@ -95,14 +95,14 @@ export const findBestSubGroup = (tallied: Tallied): string =>
  */
 export const filterUsableSubs = (matchingFiles: string[]): string[] => {
   const isNotNil = item => !R.isNil(item);
-
+//
   const subGroups = matchingFiles.map(parseFileName);
-
-  const existingSubGroups = subGroups.filter(isNotNil);
-  const singular = filterDuplicateEpisodes(existingSubGroups as MatchedFile[]);
-
-  const tallied = tally(existingSubGroups);
+//
+//   const existingSubGroups = subGroups.filter(isNotNil);
+//   const singular = filterDuplicateEpisodes(existingSubGroups as MatchedFile[]);
+//
+  const tallied = tally(subGroups.map(a => a[0]));
   const bestSubGroup = findBestSubGroup(tallied);
-
-  // return matchingFiles.filter(R.equals(bestSubGroup));
+//
+  return matchingFiles.filter(matching => parseFileName(matching).shift() === bestSubGroup);
 };

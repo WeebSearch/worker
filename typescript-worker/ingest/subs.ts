@@ -98,43 +98,45 @@ export const parseDialogues: (_: AssDialogue[]) =>
 }, {});
 
 
-
 (async () => {
   // console.log(Rar)
   // const target = 'downloads/New_Game_TV_2016_Eng/[HorribleSubs] New Game! - 01 [720p].ass';
   const archive = 'downloads/New_Game_TV_2016_Eng.rar';
   try {
     const filePaths = await unrar(archive);
-  const [group, anime, episode] = parseFileName(filePaths[0]);
-  // console.log(anime, group, episode);
-  // const nameSearch = searchMALIdByRawName(anime);
+    const filteredPaths = filterUsableSubs(filePaths);
+    const [group, anime, episode] = parseFileName(filteredPaths[0]);
+    console.log(filteredPaths[0])
+    console.log(anime, group, episode);
+    const nameSearch = await searchMALIdByRawName(anime);
 
-  const now = Date.now();
-  // An array of promises per file, containing dialogues of each file
-    console.log(filePaths)
-  return console.log(filterUsableSubs(filePaths))
-  const promises: Array<Promise<AssDialogue[]>> = filePaths.map(processFilePathAsync);
+    const now = Date.now();
+    // An array of promises per file, containing dialogues of each file
 
-  // important: Typescript can't resolve spreads with tuples properly
-  // @ts-ignore
-  const [search, ...filteredDialogues]: [number, ...AssDialogue[][]] = await Promise.all([nameSearch, ...promises]);
+    console.log(nameSearch)
+    return
+    const promises: Array<Promise<AssDialogue[]>> = filteredPaths.map(processFilePathAsync);
 
-  console.log(search);
-  const groupedDialogues = filteredDialogues.map(parseDialogues);
-  console.log(Object.keys(groupedDialogues[0]));
-  // parseDialogues(filteredDialogues[0]);
+    // important: Typescript can't resolve spreads with tuples properly
+    // @ts-ignore
+    const [search, ...filteredDialogues]: [number, ...AssDialogue[][]] = await Promise.all([nameSearch, ...promises]);
 
-  // console.log(filteredDialogues.pop());
-  // console.log(filteredDialogues)
-  // console.log(parseDialogues(filteredDialogues[0]));
-  // console.log("time", Date.now() - now);
+    console.log(search);
+    const groupedDialogues = filteredDialogues.map(parseDialogues);
+    console.log(Object.keys(groupedDialogues[0]));
+    // parseDialogues(filteredDialogues[0]);
 
-  // console.log(await processFilePathAsync(bb[0]));
+    // console.log(filteredDialogues.pop());
+    // console.log(filteredDialogues)
+    // console.log(parseDialogues(filteredDialogues[0]));
+    // console.log("time", Date.now() - now);
+
+    // console.log(await processFilePathAsync(bb[0]));
 
 
   } catch (err) {
-    console.log('something wrong')
-    console.log(err)
+    console.log('something wrong');
+    console.log(err);
   }
   // const dialogues = bb.map(parseAndExtract)
 
