@@ -15,7 +15,7 @@ interface UnrarOptions {
 }
 
 
-export const extractFileName = (pathName: string) => pathName.split('/').pop();
+export const extractFileName = (pathName: string) => pathName.split(path.sep).pop();
 
 /**
  * Unrars a file, optionally deleting it afterwards
@@ -38,10 +38,14 @@ export const unrar = async (
     quiet: true,
   }, async (err) => {
     if (err) {
+      console.log(err);
       return rej(err);
     }
-    const downloadLocation = path.join(BASE_DOWNLOAD_LOCATION, cleanName);
+    // Making sure we're unpacking in the right directory always
+    const isAlreadyInDownloads = cleanName.includes(BASE_DOWNLOAD_LOCATION);
+    const downloadLocation = isAlreadyInDownloads ? cleanName : path.join(BASE_DOWNLOAD_LOCATION, cleanName);
     try {
+      console.log(downloadLocation);
       const files = await readDirAsnyc(downloadLocation);
 
       const joinedFiles = files.map(file => path.join(downloadLocation, file));
@@ -54,7 +58,6 @@ export const unrar = async (
     } catch (e) {
       console.error(e);
       return rej(e);
-
     }
   });
 });
@@ -68,8 +71,14 @@ export const readSub = (file: string) => new Promise<string>((resolve, reject) =
   });
 });
 
-export const parseFileName = R.pipe(
-  extractFileName,
-  R.match(GENERIC_SUB_REGEX),
-  R.slice(1, 4)
-);
+type AnimeMetadata = [...Array<(string | undefined)>];
+
+export const parseFileName = (name: string): AnimeMetadata => {
+  const parsed = extractFileName(name);
+  return R.match(GENERIC_SUB_REGEX, parsed).slice(1, 4);
+};
+//   R.pipe(
+//   extractFileName,
+//   R.match(GENERIC_SUB_REGEX),
+//   R.slice(1, 4)
+// );

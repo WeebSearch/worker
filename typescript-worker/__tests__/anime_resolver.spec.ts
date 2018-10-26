@@ -1,4 +1,4 @@
-import { request } from 'graphql-request';
+import 'jest';
 import { searchMALIdByRawName } from "../resolvers/anime_resolver";
 
 jest.mock('graphql-request');

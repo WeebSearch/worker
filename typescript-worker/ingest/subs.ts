@@ -1,8 +1,9 @@
 import { compile, parse } from 'ass-compiler';
 import * as R from 'ramda';
+import { searchMALIdByRawName } from "../resolvers/anime_resolver";
 import { AssDialogue, AssFile, NameSortedDialogues } from "../typings/ass-parser";
 import { parseFileName, readSub, unrar } from "./file";
-import { searchMALIdByRawName } from "../resolvers/anime_resolver";
+import { filterUsableSubs } from "./sub_groups";
 
 // declare const parse = (content: string): AssFile => parse(content);
 
@@ -96,33 +97,45 @@ export const parseDialogues: (_: AssDialogue[]) =>
   return acc;
 }, {});
 
+
+
 (async () => {
   // console.log(Rar)
   // const target = 'downloads/New_Game_TV_2016_Eng/[HorribleSubs] New Game! - 01 [720p].ass';
-  const archive = 'downloads/New_Game_TV2_2017_Eng.rar';
-  const [group, anime, episode] = parseFileName(archive);
-  // console.log(one);
-  // console.log(two);
-  // console.log(three);
-
-  // console.log(unpack)
-  const filePaths = await unrar(archive);
-  // console.log(x)
-  const bb: string[] = await Promise.all(filePaths.map(readSub));
-  // console.log(bb[0])
+  const archive = 'downloads/New_Game_TV_2016_Eng.rar';
+  try {
+    const filePaths = await unrar(archive);
+  const [group, anime, episode] = parseFileName(filePaths[0]);
+  // console.log(anime, group, episode);
+  // const nameSearch = searchMALIdByRawName(anime);
 
   const now = Date.now();
-  // R.chain(processFilePathAsync, filePaths);
-  const promises = filePaths.map(processFilePathAsync);
-  const filteredDialogues = await Promise.all(promises);
+  // An array of promises per file, containing dialogues of each file
+    console.log(filePaths)
+  return console.log(filterUsableSubs(filePaths))
+  const promises: Array<Promise<AssDialogue[]>> = filePaths.map(processFilePathAsync);
+
+  // important: Typescript can't resolve spreads with tuples properly
+  // @ts-ignore
+  const [search, ...filteredDialogues]: [number, ...AssDialogue[][]] = await Promise.all([nameSearch, ...promises]);
+
+  console.log(search);
+  const groupedDialogues = filteredDialogues.map(parseDialogues);
+  console.log(Object.keys(groupedDialogues[0]));
+  // parseDialogues(filteredDialogues[0]);
+
   // console.log(filteredDialogues.pop());
   // console.log(filteredDialogues)
-  console.log(parseDialogues(filteredDialogues[0]));
-  console.log("time", Date.now() - now);
+  // console.log(parseDialogues(filteredDialogues[0]));
+  // console.log("time", Date.now() - now);
 
   // console.log(await processFilePathAsync(bb[0]));
 
 
+  } catch (err) {
+    console.log('something wrong')
+    console.log(err)
+  }
   // const dialogues = bb.map(parseAndExtract)
 
   // console.log(dialogues[0])

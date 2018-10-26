@@ -9,7 +9,7 @@ export interface AssInfo {
 
 export interface AssStyle {
   format: string[];
-  style: any[][] // TODO: find out
+  style: any[][]; // TODO: find out
 }
 
 export interface AssText {
@@ -19,7 +19,7 @@ export interface AssText {
     tags: string[];
     text: string;
     drawing: any[];
-  }
+  };
 }
 
 export interface AssDialogue {
@@ -51,6 +51,14 @@ export interface AssFile {
 interface NameSortedDialogues {
   [name: string]: AssDialogue[];
 }
+
+export interface Grouped<T> {
+  [name: string]: T;
+}
+
+type FileMatches = Array<[string, string]>;
+
+type MatchedFile = [string, string, string];
 
 export declare function parse(content: string): AssFile;
 
