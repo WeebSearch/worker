@@ -1,9 +1,9 @@
-import axios, { AxiosResponse } from 'axios';
-import * as R from 'ramda';
+import axios, { AxiosResponse } from "axios";
+import * as R from "ramda";
 import { MalHintSearchResponse } from "../typings/http";
 import { fetchCharactersByMalId } from "./character_resolver";
 
-export const MAL_HINT_ENDPOINT = 'https://myanimelist.net/search/prefix.json?type=anime&keyword=';
+export const MAL_HINT_ENDPOINT = "https://myanimelist.net/search/prefix.json?type=anime&keyword=";
 
 export const extractAnimesFromResponse = (resp: AxiosResponse<MalHintSearchResponse>) => {
   const { data } = resp;
@@ -14,7 +14,8 @@ export const extractAnimesFromResponse = (resp: AxiosResponse<MalHintSearchRespo
   if (!categories) {
     return;
   }
-  const category = categories.find(cat => cat.type === 'anime');
+  const x = {};
+  const category = categories.find(cat => cat.type === "anime");
   if (!category) {
     return;
   }

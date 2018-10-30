@@ -1,64 +1,72 @@
 export interface AssInfo {
-  Title: string;
-  ScriptType: string;
-  WrapStyle: string;
-  PlayResX: string;
-  PlayResY: string;
-  ScaledBorderAndShadow: 'yes' | 'no';
+  readonly Title: string;
+  readonly ScriptType: string;
+  readonly WrapStyle: string;
+  readonly PlayResX: string;
+  readonly PlayResY: string;
+  readonly ScaledBorderAndShadow: "yes" | "no";
 }
 
 export interface AssStyle {
-  format: string[];
-  style: any[][]; // TODO: find out
+  readonly format: string[];
+  readonly style: any[][]; // TODO: find out
 }
 
 export interface AssText {
-  raw: string;
-  combined: string;
-  parsed: {
-    tags: string[];
-    text: string;
-    drawing: any[];
+  readonly raw: string;
+  readonly combined: string;
+  readonly parsed: {
+    readonly tags: string[];
+    readonly text: string;
+    readonly drawing: any[];
   };
 }
 
 export interface AssDialogue {
-  Layer: number;
-  Start: number;
-  End: number;
-  Style: string;
-  Name: string;
-  MarginL: number;
-  MarginR: number;
-  MarginV: number;
-  Effect: any; // don't know
-  Text: AssText;
+  readonly Layer: number;
+  readonly Start: number;
+  readonly End: number;
+  readonly Style: string;
+  readonly Name: string;
+  readonly MarginL: number;
+  readonly MarginR: number;
+  readonly MarginV: number;
+  readonly Effect: any; // don't know
+  readonly Text: AssText;
 }
 
 export interface AssEvents {
-  format: string[];
-  comment: string[];
-  dialogue: AssDialogue[];
+  readonly format: string[];
+  readonly comment: string[];
+  readonly dialogue: AssDialogue[];
 }
 
 
 export interface AssFile {
-  info: AssInfo;
-  styles: AssStyle;
-  events: AssEvents;
+  readonly info: AssInfo;
+  readonly styles: AssStyle;
+  readonly events: AssEvents;
+}
+
+interface ParsedDialogue {
+  readonly start: number;
+  readonly end: number;
+  readonly text: string;
+  readonly name: string;
+  readonly order: number;
 }
 
 interface NameSortedDialogues {
-  [name: string]: AssDialogue[];
+  readonly [name: string]: ParsedDialogue[];
 }
 
 export interface Grouped<T> {
-  [name: string]: T;
+  readonly [name: string]: T;
 }
 
 type FileMatches = Array<[string, string]>;
 
 type MatchedFile = [string, string, string];
 
-export declare function parse(content: string): AssFile;
+export declare const parse: (content: string) => AssFile;
 

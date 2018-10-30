@@ -5,14 +5,31 @@ import { parseFileName } from "./file";
 
 const { freeze } = Object;
 
+/**
+ * Subtitles come in the following form, we have to stick to this
+ * standard because otherwise it becomes impossible to parse any sort
+ * of file name. Everything is an exception to the rule in a way...
+ *
+ * @example [subGroup] name - episode - [720p] [something hud dur].ass
+ */
 export const GENERIC_SUB_REGEX = /\[(.+)\] (.+) - (.+?) [\[(]/;
 
+/**
+ * Sub groups we don't want to use
+ */
 export const BLACKLISTED_GROUPS = freeze([
-  '__PLACEHOLDER__'
+  "__PLACEHOLDER__"
 ]);
 
+/**
+ * Subtitle files that we accept, these could include
+ *
+ * - ass
+ * - srt
+ * - sub
+ */
 export const VALID_FILE_TYPES = freeze([
-  '.ass'
+  ".ass"
 ]);
 
 /**
@@ -52,11 +69,12 @@ export const isValidSubFile = (file: string) => [
 ].every(fn => fn(file));
 
 export const groupBySubGroup = (files: FileMatches): Grouped<string> => R.reduce((collector, [subGroup, filePath]) => {
-  if (!collector[subGroup]) {
-    collector[subGroup] = [];
-  }
-  collector[subGroup].push(filePath);
-  return collector;
+  const obj = collector[subGroup] ? collector : {
+    ...collector,
+    [subGroup]: []
+  };
+  obj[subGroup].push(filePath);
+  return obj;
 }, {})(files);
 
 export const extractSubGroup = (filePath: string) => parseFileName(filePath).shift();
@@ -70,6 +88,7 @@ export const filterDuplicateFiles = (matches: MatchedFile[]) =>
     return coll;
   }, []);
 
+type Group = [string, number];
 /**
  * Finds the most suitable sub group in a folder, taking into account
  * preference of one group over the other and how many files are
@@ -77,15 +96,19 @@ export const filterDuplicateFiles = (matches: MatchedFile[]) =>
  * @param tallied
  */
 export const findBestSubGroup = (tallied: Tallied): string =>
-  Object.entries(tallied).reduce((coll: [string, number], [key, value]: [string, number]) => {
-    const [, amount] = coll;
+  Object.entries(tallied).reduce((coll: Group, [key, value]: Group) => {
+    const [previousGroup, previousAmount] = coll;
     // The amount each sub group is worth
     const multiplier = SUB_GROUP_WEIGHTS[key] || DEFAULT_SUB_GROUP_WEIGHT;
-    const worth = value * multiplier;
-    if (worth > amount) {
-      coll = [key, worth];
-    }
-    return coll;
+    const currentAmount = value * multiplier;
+    const isBestSubGroup = currentAmount > previousAmount;
+    return isBestSubGroup ? [
+      key,
+      currentAmount
+    ] : [
+      previousGroup,
+      previousAmount
+    ];
   }, ["UNKNOWN", -1])[0];
 
 /**

@@ -1,4 +1,4 @@
-import './ingest/subs'
+import "./ingest/subs";
 // import './resolvers/anime_resolver';
 
 

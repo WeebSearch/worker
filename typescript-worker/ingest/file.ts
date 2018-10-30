@@ -11,7 +11,7 @@ const readDirAsnyc = promisify(fs.readdir);
 const unlinkAsync = promisify(fs.unlink);
 
 interface UnrarOptions {
-  deleteAfter: boolean;
+  readonly deleteAfter: boolean;
 }
 
 

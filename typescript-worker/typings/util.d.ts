@@ -1,3 +1,3 @@
 interface Tallied {
-  [key: string]: number;
+  readonly [key: string]: number;
 }

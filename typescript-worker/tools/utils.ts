@@ -5,11 +5,8 @@ export const containsSublist = (blacklist: string[], checking: string[]) =>
 
 export const toPromise = async <T, K>(func: (T, args) => K) => R.curry(func);
 
-export const tally = (items: string[]): Tallied => items.reduce((coll, item) => {
-  if (coll[item] === undefined) {
-    coll[item] = 0;
-  }
-  coll[item] += 1;
-  return coll;
-}, {});
+export const tally = (items: string[]): Tallied => items.reduce((coll, item) => ({
+  ...coll,
+  [item]: coll[item] === undefined ? 0 : coll[item] + 1
+}), {});
 

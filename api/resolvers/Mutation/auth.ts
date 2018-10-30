@@ -42,17 +42,19 @@ export const authMutation = {
 
     if (!client) {
       // We don't want to give tips on wrong username/password
-      return { successful: false }
+      return { successful: false };
     }
 
+
+    // noinspection TsLint
     ctx.request.session.userId = client.id;
-    console.log(ctx.request.session)
+    console.log(ctx.request.session);
 
     const hash = await bcrypt.hash(password, client.salt);
     const authorized = hash === client.hash;
 
     if (!authorized) {
-      return { successful: false }
+      return { successful: false };
     }
 
     const { token } = await signJwt({ userId: client.id });
@@ -65,39 +67,39 @@ export const authMutation = {
   // API authentication
   async auth(
     parent,
-    { token }: { token: string },
+    { token }: { readonly token: string },
     ctx: Context
   ): Promise<AuthResponse> {
-    let payload;
-
     try {
-      payload = await jwt.verify(token, process.env.JWT_SECRET);
+      const payload = await jwt.verify(token, process.env.JWT_SECRET);
+
+      const { userId: id } = payload as { readonly userId: string };
+
+      // noinspection TsLint
+      ctx.request.session.userId = id;
+
+      const client = await ctx.db.query.user({
+        where: { id }
+      });
+
+      if (!client) {
+        return { successful: false };
+      }
+
+      return {
+        successful: true
+      };
     } catch (e) {
       console.error(e);
-      return { successful: false }
+      return { successful: false };
     }
-
-    const { userId: id } = payload;
-
-    ctx.request.session.userId = id;
-
-    const client = await ctx.db.query.user({
-      where: { id }
-    });
-
-    if (!client) {
-      return { successful: false }
-    }
-
-    return {
-      successful: true,
-    };
   },
   async logout(
     parent,
     {},
     ctx: Context
   ): Promise<AuthResponse> {
+    // @ts-ignore
     return new Promise((resolve, reject) => {
       if (!ctx.request.session.userId) {
         return resolve({ successful: false });
@@ -105,11 +107,11 @@ export const authMutation = {
       // const destroySessionAsync = promisify(ctx.request.destroy)
       // const result = await destroySessionAsync();
       ctx.request.session.destroy((err) => {
-        if (err) {
-          return resolve({ successful: false })
-        }
-        return resolve({ successful: true })
-      })
-    })
-  },
+        // if (err) {
+        //   return resolve({ successful: false });
+        // }
+        return resolve({ successful: true });
+      });
+    });
+  }
 };

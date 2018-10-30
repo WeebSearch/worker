@@ -3,7 +3,7 @@ import {
   filterText,
   isTextUsable,
   isValidSpeaker,
-  isValidStyle, orderBySpeaker,
+  isValidStyle, parseDialogues,
   processFileContent,
   processFilePathAsync
 } from "../ingest/subs";
@@ -81,7 +81,7 @@ test('removing hard newlines from dialogues', async () => {
 
 test('ordering subtitles', async () => {
   const dialogues = await processFilePathAsync(EXAMPLE_FILE_LOCATION);
-  const ordered = orderBySpeaker(dialogues);
+  const ordered = parseDialogues(dialogues);
 
   const orderedTotal = R.compose(R.unnest, Object.values)(ordered);
   const speakers = Object.keys(ordered);

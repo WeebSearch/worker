@@ -20,7 +20,7 @@ services:
             host: postgres
             port: '5432'
             database: anime_index
-            user: postgres
+            user: "prisma-client"
             password: "kawaii"
             migrations: true
 
@@ -29,7 +29,7 @@ services:
     container_name: "postgres"
     restart: always
     environment:
-#      POSTGRES_USER: "prisma-client"
+      POSTGRES_USER: "prisma-client"
       POSTGRES_PASSWORD: "kawaii"
     volumes:
       - postgres:/var/lib/postgresql/data

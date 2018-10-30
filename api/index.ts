@@ -1,6 +1,6 @@
 import * as dotenv from "dotenv";
 import { GraphQLServer } from "graphql-yoga";
-import * as helmet from 'helmet'
+import * as helmet from "helmet";
 import { Prisma } from "./generated/prisma";
 import { auth, limitRedis } from "./modules/middlewares";
 import { sess } from "./modules/session";

@@ -1,3 +1,3 @@
-interface Anime {
-
-}
+// interface Anime {
+//
+// }

@@ -19,9 +19,9 @@ const fileTransport = new (transports.DailyRotateFile)({
 
 const logFormat = format.combine(
   format.label({ label: "worker" }),
-  // format.timestamp({
-  //   format: 'HH-MM:ss YYYY-MM-DD'
-  // }),
+  format.timestamp({
+    format: 'HH-MM:ss YYYY-MM-DD'
+  }),
   format.prettyPrint(),
   format.colorize(),
   format.align(),
@@ -40,7 +40,8 @@ export const logger = createLogger({
   transports: [
     consoleTransport,
     fileTransport
-  ]
+  ],
+
 });
 
 fileTransport.on("rotate", (past, present) =>
