@@ -22,17 +22,19 @@ export interface MalHintSearchResponse {
   }>;
 }
 
+interface AnilistCharacter {
+  readonly id: string;
+  readonly name: {
+    readonly first?: string;
+    readonly last?: string;
+    readonly native?: string;
+  };
+}
+
 export interface AnilistCharacterResponse {
   readonly Media: {
     readonly characters: {
-      readonly nodes: Array<{
-        readonly id: string;
-        readonly name: {
-          readonly first?: string;
-          readonly last?: string;
-          readonly native?: string;
-        };
-      }>
+      readonly nodes: AnilistCharacter[]
     }
   };
 }

@@ -70,3 +70,4 @@ type MatchedFile = [string, string, string];
 
 export declare const parse: (content: string) => AssFile;
 
+type FuseMatch<T> = [string, (T | undefined)];

@@ -34,7 +34,6 @@
 
     // Functional https://github.com/jonaskello/tslint-immutable
     "no-var-keyword": true,
-    "no-parameter-reassignment": true,
     "typedef": [
       true,
       "call-signature"
@@ -42,6 +41,7 @@
     "readonly-keyword": true,
     // this is way too much
     // "readonly-array": true,
+    "no-parameter-reassignment": true,
     "no-let": true,
     "no-loop-statement": true,
     "no-object-mutation": true,

@@ -4,7 +4,7 @@ import { searchMALIdByRawName } from "../resolvers/anime_resolver";
 import { AssDialogue, AssFile, NameSortedDialogues, ParsedDialogue } from "../typings/ass-parser";
 import { parseFileName, readSub, unrar } from "./file";
 import { filterUsableSubs } from "./sub_groups";
-import { fetchCharacters } from "../resolvers/character_resolver";
+import { fetchCharacters, matchCharacter, matchCharacters } from "../resolvers/character_resolver";
 
 // declare const parse = (content: string): AssFile => parse(content);
 
@@ -129,18 +129,26 @@ export const parseDialogues = (dialogues: AssDialogue[]): NameSortedDialogues =>
     // @ts-ignore
     const [search, ...filteredDialogues]: [number, ...AssDialogue[][]] = await Promise.all([nameSearch, ...promises]);
 
-    const characters = await fetchCharacters(12312123);
-    console.log(characters);
-    console.log(search);
-    const groupedDialogues = filteredDialogues.map(parseDialogues);
-    console.log(Object.keys(groupedDialogues[1]));
+    const characters = await fetchCharacters(search);
+    const chars = characters.Media.characters.nodes;
+    const matchAnimeCharacters = R.curry(matchCharacters)(chars);
+
+    const characterMatchPipe = R.pipe(parseDialogues, Object.keys, matchAnimeCharacters);
+    const matches = filteredDialogues.map(characterMatchPipe);
+    // const parsed = filteredDialogues.map(parseDialogues);
+    // const dialogueCharacters = parsed.map(Object.keys);
+    // const matches = dialogueCharacters.map(matchAnimeCharacters);
+    console.log(matches);
+    // console.log(characters);
+    // console.log(search);
+    // const groupedDialogues = filteredDialogues.map(parseDialogues);
+    // console.log(Object.keys(groupedDialogues[1]));
 
 
     // parseDialogues(filteredDialogues[0]);
 
     // console.log(filteredDialogues.pop());
     // console.log(filteredDialogues)
-    // console.log(parseDialogues(filteredDialogues[0]));
     // console.log("time", Date.now() - now);
 
     // console.log(await processFilePathAsync(bb[0]));
