@@ -32,13 +32,13 @@
     ],
     "only-arrow-functions": true,
 
-    // Functional https://github.com/jonaskello/tslint-immutable
     "no-var-keyword": true,
     "typedef": [
       true,
       "call-signature"
     ],
     "readonly-keyword": true,
+    "no-eval": true,
     // this is way too much
     // "readonly-array": true,
     "no-parameter-reassignment": true,

@@ -12,7 +12,7 @@
 		"build": "rimraf dist && tsc",
 		"build:worker": "tsc -p typescript-worker",
 		"build:api": "tsc -p api",
-		"tslint-check": "tslint-config-prettier-check ./tslint.json"
+		"lint:worker": "tslint --project typescript-worker"
 	},
 	"dependencies": {
 		"apollo-server": "^2.1.0",
@@ -25,8 +25,8 @@
 		"express-rate-limit": "^3.2.1",
 		"express-session": "^1.15.6",
 		"fuse.js": "^3.3.0",
-		"fuzzyset.js": "^0.0.7",
 		"glob-fs": "^0.1.7",
+		"graphql": "^14.0.2",
 		"graphql-request": "^1.8.2",
 		"graphql-yoga": "1.16.2",
 		"helmet": "^3.14.0",
