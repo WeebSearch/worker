@@ -1,8 +1,6 @@
 import { SavedFile } from "../typings/ass-parser";
 import { extract, isArchive } from "./file";
 
-
-
 /**
  * Processing of the files after they are downloaded and sorted by the
  * downloader

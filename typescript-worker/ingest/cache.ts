@@ -37,7 +37,6 @@ export const redisMemoize = (name: string, f: (..._: any[]) => any) => async (..
     return f(...args);
   }
   const [arg] = args;
-  console.log(args);
   const argTarget = [REDIS_CACHE_PREFIX, name, JSON.stringify(arg)].join(":");
   const cached = await getAsync(argTarget);
   if (cached) {

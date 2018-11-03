@@ -1,7 +1,8 @@
-import axios, { AxiosResponse } from 'axios';
-import * as cheerio from 'cheerio';
+import axios, { AxiosResponse } from "axios";
+import * as cheerio from "cheerio";
 import * as R from "ramda";
 import { processSubsComRu } from "../ingest/downloader";
+import { logger } from "../tools/logging";
 import { RESPECT_ROBOTS_TXT, USER_AGENT } from "./settings";
 import { QuerySelector, SpiderOptions } from "./spidey";
 
@@ -12,12 +13,12 @@ export const request = axios.create({
   // withCredentials: true,
   // maxRedirects: 0,
   headers: {
-    'User-Agent': USER_AGENT
-  },
+    "User-Agent": USER_AGENT
+  }
 });
 
 const TO_CRAWL = [
-  'http://subs.com.ru/list.php?c=enganime'
+  "http://subs.com.ru/list.php?c=enganime"
 ];
 
 const getHtml = (response: AxiosResponse) => response.data;
@@ -45,11 +46,13 @@ const crawl = async (options: SpiderOptions): Promise<void> => {
   const selections = getLinks(axiosResponse);
 
   // TODO: this maybe could cause problems with later crawlers?
-  const cookie = axiosResponse.headers['set-cookie'];
+  const cookie = axiosResponse.headers["set-cookie"];
   await callback({ selections, cookie, processFiles: true });
 
   return crawl({ ...options, targets: tail });
 };
 
-export const crawlSubsComRu = () =>
-  crawl({ targets: TO_CRAWL, selector: 'a[href$="dl"]', callback: processSubsComRu });
+export const crawlSubsComRu = () => {
+  logger.info("Crawing https://subs.com.ru");
+  return crawl({ targets: TO_CRAWL, selector: "a[href$=\"dl\"]", callback: processSubsComRu });
+};

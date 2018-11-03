@@ -3,22 +3,26 @@ import * as path from "path";
 import * as R from "ramda";
 import { Readable } from "stream";
 import { request } from "../crawler/crawl";
-import { SpiderCallback } from "../crawler/spidey";
+import { SavedFile } from "../typings/ass-parser";
+import { SpiderCallback } from "../typings/spidey";
+import { processSavedFiles } from "./file_processor";
 
 const getWriteFile = (name: string) => fs.createWriteStream(
-  path.join('downloads', name)
+  path.join("downloads", name)
 );
 
-const processSingleFile = (inStream: Readable, outStream: fs.WriteStream): Promise<string> => new Promise((res, rej) => {
-  inStream.pipe(outStream);
-  outStream.on('finish', () => res(outStream.path as string));
-  outStream.on('error', rej);
-});
+const processSingleFile =
+  (url: string, inStream: Readable, outStream: fs.WriteStream) =>
+    new Promise<SavedFile>((res, rej) => {
+    inStream.pipe(outStream);
+    outStream.on("finish", () => res([url, outStream.path as string]));
+    outStream.on("error", rej);
+  });
 
-const extractFileName = (url: string) => url.split('/').pop();
+const extractFileName = (url: string) => url.split("/").pop();
 
 const downloadUrl = (url: string, cookie) => request.get(url, {
-  responseType: 'stream',
+  responseType: "stream",
   // server doesn't reply without a session
   headers: {
     Cookie: cookie
@@ -26,7 +30,7 @@ const downloadUrl = (url: string, cookie) => request.get(url, {
 });
 
 export const processSubsComRu = async ({ selections, cookie, processFiles }: SpiderCallback) => {
-  const LINK_PREPEND = 'http://subs.com.ru/';
+  const LINK_PREPEND = "http://subs.com.ru/";
   const extractUrl = response => response.request.res.responseUrl;
 
   const links = selections.map(link => LINK_PREPEND + link.attribs.href);
@@ -43,15 +47,16 @@ export const processSubsComRu = async ({ selections, cookie, processFiles }: Spi
 
   const writeFiles = downloads.map(requestToStream);
   const streams = R.zipWith(
-    (download, file) => processSingleFile(download.data, file),
+    (download, file) => processSingleFile(download.config.url, download.data, file),
     downloads,
     writeFiles
   );
 
-  const paths = await Promise.all(streams);
+  const files = await Promise.all(streams);
 
   if (processFiles) {
+    await processSavedFiles(files);
     // TODO: send data to file handler
   }
-  return paths;
+  return files;
 };

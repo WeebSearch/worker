@@ -11,7 +11,7 @@ const fileTransport = new (transports.DailyRotateFile)({
   ),
   json: true,
   filename: "log/%DATE%.log",
-  datePattern: "DD-MM-YYYY",
+  datePattern: "YYYY--MM-DD",
   zippedArchive: true,
   maxSize: "10m",
   maxFiles: "14d"

@@ -33,8 +33,9 @@ interface AnilistCharacter {
 
 export interface AnilistCharacterResponse {
   readonly Media: {
+    readonly id: number;
     readonly characters: {
-      readonly nodes: AnilistCharacter[]
+      readonly nodes: AnilistCharacter[];
     }
   };
 }

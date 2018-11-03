@@ -9,7 +9,3 @@ export const tally = (items: string[]): Tallied => items.reduce((coll, item) => 
 }), {});
 
 export const mapLower = R.map(R.toLower);
-
-export const memoize = f => {
-
-}

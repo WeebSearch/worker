@@ -12,6 +12,10 @@ export interface AssStyle {
   readonly style: any[][]; // TODO: find out
 }
 
+type URL = string;
+type PATH = string;
+export type SavedFile = [URL, PATH];
+
 export interface AssText {
   readonly raw: string;
   readonly combined: string;
@@ -71,3 +75,4 @@ type MatchedFile = [string, string, string];
 export declare const parse: (content: string) => AssFile;
 
 type FuseMatch<T> = [string, (T | undefined)];
+

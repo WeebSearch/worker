@@ -3,6 +3,7 @@ import * as R from "ramda";
 import { MalHintSearchResponse } from "../typings/http";
 
 export const MAL_HINT_ENDPOINT = "https://myanimelist.net/search/prefix.json?type=anime&keyword=";
+export const malSearchUrl = search => MAL_HINT_ENDPOINT + search;
 
 export const extractAnimesFromResponse = (resp: AxiosResponse<MalHintSearchResponse>) => {
   const { data } = resp;
@@ -21,10 +22,12 @@ export const extractAnimesFromResponse = (resp: AxiosResponse<MalHintSearchRespo
 };
 
 export const searchMALIdByRawName = async (rawName: string): Promise<number | undefined> => {
-  const response = await axios.get(MAL_HINT_ENDPOINT + rawName);
+  const response = await axios.get(malSearchUrl(rawName));
   const animes = extractAnimesFromResponse(response);
   // MAL Elasticsearch doesn't check full matches, so we check instead
-  const fullMatch = animes.find(anime => anime.name.toLowerCase() === rawName.toLowerCase());
+  const fullMatch = animes.find(
+    anime => anime.name.toLowerCase() === rawName.toLowerCase()
+  );
 
   const target = fullMatch || animes.shift();
   return target.id;

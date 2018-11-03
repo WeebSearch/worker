@@ -1,11 +1,10 @@
 import * as Fuse from "fuse.js";
-import { GraphQLClient, request } from "graphql-request";
+import { GraphQLClient } from "graphql-request";
 import * as R from "ramda";
 import { redisMemoize } from "../ingest/cache";
-import { getQuery } from "../queries";
-import { logger } from "../tools/logging";
-import { AnilistCharacter, AnilistCharacterResponse } from "../typings/http";
+import { getQuery, logDbError } from "../queries";
 import { FuseMatch } from "../typings/ass-parser";
+import { AnilistCharacter, AnilistCharacterResponse } from "../typings/http";
 
 const ANILIST_ENDPOINT = "https://graphql.anilist.co";
 
@@ -15,10 +14,7 @@ export const fetchCharacters: (_: number | string) => Promise<AnilistCharacterRe
   redisMemoize("fetchCharacters", async (id: string | number) => {
     const q = await getQuery("fetchCharactersByMalId");
     return anilist.request(q, { id })
-      .catch((error) => {
-        logger.error(`Error fetching character ${id} from anilist`);
-        logger.debug(error);
-      });
+      .catch(logDbError(`Error fetching character ${id} from anilist`));
   });
 
 export const matchCharacters = (pool: AnilistCharacter[], characterNames: string[]) => {
@@ -29,8 +25,7 @@ export const matchCharacters = (pool: AnilistCharacter[], characterNames: string
   return characterNames.map(matchFuzz);
 };
 
-export const matchCharacter =
-  <T>(pool: Fuse<T>, characterName: string): FuseMatch<T> => {
+export const matchCharacter = <T>(pool: Fuse<T>, characterName: string): FuseMatch<T> => {
     const [hit] = pool.search(characterName);
     return [characterName, hit];
   };

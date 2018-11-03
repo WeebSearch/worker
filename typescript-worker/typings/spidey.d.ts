@@ -1,12 +1,12 @@
 export declare type QuerySelector = string;
 
 export interface SpiderOptions {
-  targets: string[];
-  selector: QuerySelector;
-  limit?: number;
-  callback: (info: SpiderCallback) => Promise<any>;
-  paginate?: QuerySelector;
-  respectRobotsTxt?: boolean;
+  readonly targets: string[];
+  readonly selector: QuerySelector;
+  readonly limit?: number;
+  readonly callback: (info: SpiderCallback) => Promise<any>;
+  readonly paginate?: QuerySelector;
+  readonly respectRobotsTxt?: boolean;
   // userAgent: string;
 }
 
@@ -16,7 +16,12 @@ export interface SpiderOptions {
 // }
 
 export interface SpiderCallback {
-  cookie: string;
-  selections: CheerioElement[];
-  processFiles: boolean;
+  readonly cookie: string;
+  readonly selections: CheerioElement[];
+  readonly processFiles: boolean;
+}
+
+export interface SpiderDownloader {
+  readonly baseUrl: string;
+  readonly processor: (args: SpiderCallback) => Promise<void>;
 }

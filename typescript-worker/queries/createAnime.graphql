@@ -1,0 +1,9 @@
+mutation($rawName: String! $anilistId: Int! $malId: Int!) {
+  createAnime(data: {
+    rawName: $rawName
+    anilistId: $anilistId
+    malId: $malId
+  }) {
+    id
+  }
+}

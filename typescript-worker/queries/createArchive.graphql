@@ -1,0 +1,8 @@
+mutation($linkUrl: String $fileName: String!) {
+  createArchive(data: {
+    linkUrl: $linkUrl
+    fileName: $fileName
+  }) {
+    id
+  }
+}

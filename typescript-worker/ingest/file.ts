@@ -1,11 +1,17 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import * as R from 'ramda';
-import * as unpacker from 'unpack-all';
+import * as fs from "fs";
+import * as path from "path";
+import * as R from "ramda";
+import * as unpacker from "unpack-all";
 import { promisify } from "util";
 import { GENERIC_SUB_REGEX } from "./sub_groups";
 
-const BASE_DOWNLOAD_LOCATION = 'downloads';
+const BASE_DOWNLOAD_LOCATION = "downloads";
+const { freeze } = Object;
+
+const ARCHIVE_GROUPS = freeze([
+  ".rar",
+  ".zip"
+]);
 
 const readDirAsnyc = promisify(fs.readdir);
 const unlinkAsync = promisify(fs.unlink);
@@ -25,17 +31,18 @@ export const extractFileName = (pathName: string) => pathName.split(path.sep).po
  *
  * @returns Promise<string[]> - path of all the extracted files
  */
-export const unrar = async (
+export const extract = async (
   location: string, options: UnrarOptions = { deleteAfter: false }
 ) => new Promise<string[]>(async (res, rej) => {
   const { deleteAfter } = options;
 
   const fileName = extractFileName(location);
-  const cleanName = fileName.split('.').shift();
+  const cleanName = fileName.split(".").shift();
   unpacker.unpack(location, {
     targetDir: BASE_DOWNLOAD_LOCATION,
+    forceDirectory: true,
     forceOverwrite: true,
-    quiet: true,
+    quiet: true
   }, async (err) => {
     if (err) {
       console.log(err);
@@ -77,6 +84,9 @@ export const parseFileName = (name: string): AnimeMetadata => {
   const parsed = extractFileName(name);
   return R.match(GENERIC_SUB_REGEX, parsed).slice(1, 4);
 };
+
+export const isArchive = (fileName: string) =>
+  ARCHIVE_GROUPS.some(group => group.includes(extractFileName(fileName)));
 //   R.pipe(
 //   extractFileName,
 //   R.match(GENERIC_SUB_REGEX),

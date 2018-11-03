@@ -1,10 +1,11 @@
 import { compile, parse } from "ass-compiler";
 import * as R from "ramda";
 import { searchMALIdByRawName } from "../resolvers/anime_resolver";
+import { fetchCharacters, matchCharacters } from "../resolvers/character_resolver";
 import { AssDialogue, AssFile, NameSortedDialogues, ParsedDialogue } from "../typings/ass-parser";
-import { parseFileName, readSub, unrar } from "./file";
+import { createAnime, createArchive } from "./db";
+import { extract, parseFileName, readSub } from "./file";
 import { filterUsableSubs } from "./sub_groups";
-import { fetchCharacters, matchCharacter, matchCharacters } from "../resolvers/character_resolver";
 
 // declare const parse = (content: string): AssFile => parse(content);
 
@@ -103,7 +104,7 @@ export const parseDialogues = (dialogues: AssDialogue[]): NameSortedDialogues =>
       const parsed = createDialogue(dialogue, order);
       obj[target].push(parsed);
       return [obj, order + 1];
-    }, [{}, 0])[0] as NameSortedDialogues;
+    }, [{}, 0])[0];
 
 
 (async () => {
@@ -111,7 +112,7 @@ export const parseDialogues = (dialogues: AssDialogue[]): NameSortedDialogues =>
   // const target = 'downloads/New_Game_TV_2016_Eng/[HorribleSubs] New Game! - 01 [720p].ass';
   const archive = "downloads/New_Game_TV_2016_Eng.rar";
   try {
-    const filePaths = await unrar(archive);
+    const filePaths = await extract(archive);
     const filteredPaths = filterUsableSubs(filePaths);
     const [group, anime, episode] = parseFileName(filteredPaths[0]);
     console.log(filteredPaths[0]);
@@ -127,18 +128,26 @@ export const parseDialogues = (dialogues: AssDialogue[]): NameSortedDialogues =>
 
     // important: Typescript can't resolve spreads with tuples properly
     // @ts-ignore
-    const [search, ...filteredDialogues]: [number, ...AssDialogue[][]] = await Promise.all([nameSearch, ...promises]);
+    const [malId, ...filteredDialogues]: [number, ...AssDialogue[][]] = await Promise.all([nameSearch, ...promises]);
 
-    const characters = await fetchCharacters(search);
-    const chars = characters.Media.characters.nodes;
+    const characters = await fetchCharacters(malId);
+    const chars = characters && characters.Media.characters.nodes;
+    const anilistId = characters && characters.Media.id;
+    console.log(malId);
+    console.log(anilistId);
     const matchAnimeCharacters = R.curry(matchCharacters)(chars);
 
     const characterMatchPipe = R.pipe(parseDialogues, Object.keys, matchAnimeCharacters);
     const matches = filteredDialogues.map(characterMatchPipe);
+    // createAnime({ anilistId, malId, rawName: anime });
+    // createArchive({
+    //   linkUrl
+    // })
+
     // const parsed = filteredDialogues.map(parseDialogues);
     // const dialogueCharacters = parsed.map(Object.keys);
     // const matches = dialogueCharacters.map(matchAnimeCharacters);
-    console.log(matches);
+    console.log(characters);
     // console.log(characters);
     // console.log(search);
     // const groupedDialogues = filteredDialogues.map(parseDialogues);
