@@ -15,7 +15,7 @@ import { AnimeViewerComponent } from './anime-viewer/anime-viewer.component';
 import { ProfileComponent } from './profile/profile.component';
 import { Observable } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
-import { AuthInterceptor } from './auth/auth.interceptor';
+// import { AuthInterceptor } from './auth/auth.interceptor';
 import { onError } from 'apollo-link-error';
 import { AuthGuard, ReverseAuthGuard } from './auth/auth.guard';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -42,11 +42,11 @@ const routes: Routes = [
   { path: '**', component: PageNotFoundComponent }
 ];
 
-const Interceptor: ClassProvider = {
-  provide: HTTP_INTERCEPTORS,
-  useClass: AuthInterceptor,
-  multi: true
-};
+// const Interceptor: ClassProvider = {
+//   provide: HTTP_INTERCEPTORS,
+//   // useClass: AuthInterceptor,
+//   multi: true
+// };
 
 @NgModule({
   declarations: [
@@ -65,7 +65,7 @@ const Interceptor: ClassProvider = {
     HttpClientModule,
     ReactiveFormsModule
   ],
-  providers: [Interceptor, Apollo, JwtHelperService, CustomPreloader, CookieService],
+  providers: [Apollo, JwtHelperService, CustomPreloader, CookieService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
