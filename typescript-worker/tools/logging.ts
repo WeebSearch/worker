@@ -26,13 +26,14 @@ const logFormat = format.combine(
   format.colorize(),
   format.align(),
   format.printf(info => {
-    return `[${info.label}]@[${info.level}]: ${info.message} <${info.timestamp}>`;
+    return `[${info.timestamp}] [${info.label}]@[${info.level}]: ${info.message}`;
   })
 );
 
 const consoleTransport = new transports.Console({
   format: logFormat,
-  level: process.env.LOG_LEVEL || "info"
+  // level: process.env.LOG_LEVEL || "info"
+  level: "info"
 });
 
 export const logger = createLogger({

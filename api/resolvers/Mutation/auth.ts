@@ -1,8 +1,14 @@
 import * as bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 import { promisify } from "util";
+import { User } from "../../generated/prisma";
 import { AuthResponse, LoginCredentials } from "../../interfaces/query";
 import { Context, signJwt } from "../../utils";
+
+const extractProfile = (userProfile: User) => {
+  const { id, hash, updatedAt, salt, ...rest } = userProfile;
+  return rest;
+};
 
 
 export const authMutation = {
@@ -16,7 +22,7 @@ export const authMutation = {
     const salt = await bcrypt.genSalt(saltRounds);
     const hash = await bcrypt.hash(password, salt);
 
-    const { id } = await ctx.db.mutation.createUser({
+    const user = await ctx.db.mutation.createUser({
       data: {
         email,
         name,
@@ -25,8 +31,10 @@ export const authMutation = {
       }
     });
 
-    const { token } = await signJwt({ id });
+    const { token } = await signJwt({ id: user.id });
+    const profile = extractProfile(user);
     return {
+      profile,
       token,
       successful: true
     };
@@ -45,11 +53,6 @@ export const authMutation = {
       return { successful: false };
     }
 
-
-    // noinspection TsLint
-    ctx.request.session.userId = client.id;
-    console.log(ctx.request.session);
-
     const hash = await bcrypt.hash(password, client.salt);
     const authorized = hash === client.hash;
 
@@ -58,8 +61,10 @@ export const authMutation = {
     }
 
     const { token } = await signJwt({ userId: client.id });
+    const profile = extractProfile(client);
 
     return {
+      profile,
       token,
       successful: true
     };

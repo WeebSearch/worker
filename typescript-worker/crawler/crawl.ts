@@ -3,8 +3,8 @@ import * as cheerio from "cheerio";
 import * as R from "ramda";
 import { processSubsComRu } from "../ingest/downloader";
 import { logger } from "../tools/logging";
+import { QuerySelector, SpiderOptions } from "../typings/spidey";
 import { RESPECT_ROBOTS_TXT, USER_AGENT } from "./settings";
-import { QuerySelector, SpiderOptions } from "./spidey";
 
 /**
  * Allows us to persist cookies
@@ -34,6 +34,7 @@ const crawl = async (options: SpiderOptions): Promise<void> => {
 
   const [head, ...tail] = targets;
 
+  logger.info(`Crawling URL: ${head}`);
   const axiosResponse = await request.get(head);
   const extractLinks = R.curry(filterDownloads)(selector);
 

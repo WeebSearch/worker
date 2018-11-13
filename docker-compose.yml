@@ -1,4 +1,4 @@
-version: "3"
+version: "3.5"
 services:
   prisma:
     image: prismagraphql/prisma:1.17
@@ -23,7 +23,6 @@ services:
             user: "prisma-client"
             password: "kawaii"
             migrations: true
-
   postgres:
     image: postgres
     container_name: "postgres"
@@ -36,5 +35,18 @@ services:
   redis:
     image: redis:alpine
     container_name: "redis"
+  solr:
+    container_name: "solr"
+    image: solr
+    ports:
+      - "8983:8983"
+    volumes:
+      - core2:/opt/solr/server/solr/core2
+
+networks:
+  postgres:
+    driver: bridge
+
 volumes:
   postgres:
+  core2:

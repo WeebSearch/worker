@@ -15,8 +15,8 @@ import { filterUsableSubs } from "./sub_groups";
  * Effect modifiers: {\i0}Hello{\i1}
  * Hard newline: \N
  */
-const CONTROL_CHARACTER_REGEX = /({\\.+?}|\\N)/g;
-const DEFAULT_SPEAKER = "__UNKNOWN__";
+export const CONTROL_CHARACTER_REGEX = /({\\.+?}|\\N)/g;
+export const DEFAULT_SPEAKER = "__UNKNOWN__";
 
 export const INVALID_SPEAKERS = Object.freeze([
   "on-screen"
@@ -83,9 +83,9 @@ export const processFilePathAsync: PathToDialoguesAsync = R.pipeP(
 
 export const createDialogue = (dialogue: AssDialogue, order): ParsedDialogue => ({
   name: dialogue.Name,
-  start: dialogue.Start,
+  start: Math.round(dialogue.Start),
   text: dialogue.Text.combined,
-  end: dialogue.End,
+  end: Math.round(dialogue.End),
   order
 });
 
@@ -106,74 +106,44 @@ export const parseDialogues = (dialogues: AssDialogue[]): NameSortedDialogues =>
       return [obj, order + 1];
     }, [{}, 0])[0];
 
-
-(async () => {
-  // console.log(Rar)
-  // const target = 'downloads/New_Game_TV_2016_Eng/[HorribleSubs] New Game! - 01 [720p].ass';
-  const archive = "downloads/New_Game_TV_2016_Eng.rar";
-  try {
-    const filePaths = await extract(archive);
-    const filteredPaths = filterUsableSubs(filePaths);
-    const [group, anime, episode] = parseFileName(filteredPaths[0]);
-    console.log(filteredPaths[0]);
-    console.log(anime, group, episode);
-    const nameSearch = searchMALIdByRawName(anime);
-
-    const now = Date.now();
-    // An array of promises per file, containing dialogues of each file
-
-    console.log(nameSearch);
-    // return;
-    const promises: Array<Promise<AssDialogue[]>> = filteredPaths.map(processFilePathAsync);
-
-    // important: Typescript can't resolve spreads with tuples properly
-    // @ts-ignore
-    const [malId, ...filteredDialogues]: [number, ...AssDialogue[][]] = await Promise.all([nameSearch, ...promises]);
-
-    const characters = await fetchCharacters(malId);
-    const chars = characters && characters.Media.characters.nodes;
-    const anilistId = characters && characters.Media.id;
-    console.log(malId);
-    console.log(anilistId);
-    const matchAnimeCharacters = R.curry(matchCharacters)(chars);
-
-    const characterMatchPipe = R.pipe(parseDialogues, Object.keys, matchAnimeCharacters);
-    const matches = filteredDialogues.map(characterMatchPipe);
-    // createAnime({ anilistId, malId, rawName: anime });
-    // createArchive({
-    //   linkUrl
-    // })
-
-    // const parsed = filteredDialogues.map(parseDialogues);
-    // const dialogueCharacters = parsed.map(Object.keys);
-    // const matches = dialogueCharacters.map(matchAnimeCharacters);
-    console.log(characters);
-    // console.log(characters);
-    // console.log(search);
-    // const groupedDialogues = filteredDialogues.map(parseDialogues);
-    // console.log(Object.keys(groupedDialogues[1]));
+export const getEpisodeLength = (dialogues: AssDialogue[]) =>
+  Math.max(...dialogues.map(dialogue => dialogue.End));
 
 
-    // parseDialogues(filteredDialogues[0]);
 
-    // console.log(filteredDialogues.pop());
-    // console.log(filteredDialogues)
-    // console.log("time", Date.now() - now);
-
-    // console.log(await processFilePathAsync(bb[0]));
-
-
-  } catch (err) {
-    console.log("something wrong");
-    console.log(err);
-  }
-  // const dialogues = bb.map(parseAndExtract)
-
-  // console.log(dialogues[0])
-  // const fileStr: string = (await readFileAsync()).toString()
-  // const file: AssFile = parse(fileStr)
-  // console.log(JSON.stringify(file.events.dialogue.slice(100, 120), null, 4))
-  // console.log(file)
-  // console.log(parse(file))
-})();
+// (async () => {
+//   // console.log(Rar)
+//   // const target = 'downloads/New_Game_TV_2016_Eng/[HorribleSubs] New Game! - 01 [720p].ass';
+//   const archive = "downloads/New_Game_TV_2016_Eng.rar";
+//   try {
+//     const filePaths = await extract(archive);
+//
+//     // console.log(characters);
+//     // console.log(search);
+//     // const groupedDialogues = filteredDialogues.map(parseDialogues);
+//     // console.log(Object.keys(groupedDialogues[1]));
+//
+//
+//     // parseDialogues(filteredDialogues[0]);
+//
+//     // console.log(filteredDialogues.pop());
+//     // console.log(filteredDialogues)
+//     // console.log("time", Date.now() - now);
+//
+//     // console.log(await processFilePathAsync(bb[0]));
+//
+//
+//   } catch (err) {
+//     console.log("something wrong");
+//     console.log(err);
+//   }
+//   // const dialogues = bb.map(parseAndExtract)
+//
+//   // console.log(dialogues[0])
+//   // const fileStr: string = (await readFileAsync()).toString()
+//   // const file: AssFile = parse(fileStr)
+//   // console.log(JSON.stringify(file.events.dialogue.slice(100, 120), null, 4))
+//   // console.log(file)
+//   // console.log(parse(file))
+// })();
 

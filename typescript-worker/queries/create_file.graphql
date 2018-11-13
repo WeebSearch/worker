@@ -1,0 +1,12 @@
+mutation(
+$file: FileCreateInput!
+) {
+  createFile(
+    data: $file
+  ) {
+    id
+    episode {
+      id
+    }
+  }
+}

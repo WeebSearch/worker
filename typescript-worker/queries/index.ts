@@ -30,6 +30,7 @@ export const logDbError = (message, options?) => error => {
     logger.warn(`Attempted to save duplicate copy of item from ${err.path}`);
     logger.debug(JSON.stringify(error.request.variables, null, 2));
   } else {
+    console.log(error.response.errors.slice(0, 5));
     logger.error(message);
     logger.debug(error);
   }

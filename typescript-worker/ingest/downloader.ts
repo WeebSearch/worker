@@ -6,6 +6,7 @@ import { request } from "../crawler/crawl";
 import { SavedFile } from "../typings/ass-parser";
 import { SpiderCallback } from "../typings/spidey";
 import { processSavedFiles } from "./file_processor";
+import { CommitPayload, PartialPayload } from "../typings/db";
 
 const getWriteFile = (name: string) => fs.createWriteStream(
   path.join("downloads", name)
@@ -14,10 +15,10 @@ const getWriteFile = (name: string) => fs.createWriteStream(
 const processSingleFile =
   (url: string, inStream: Readable, outStream: fs.WriteStream) =>
     new Promise<SavedFile>((res, rej) => {
-    inStream.pipe(outStream);
-    outStream.on("finish", () => res([url, outStream.path as string]));
-    outStream.on("error", rej);
-  });
+      inStream.pipe(outStream);
+      outStream.on("finish", () => res([url, outStream.path as string]));
+      outStream.on("error", rej);
+    });
 
 const extractFileName = (url: string) => url.split("/").pop();
 
@@ -34,7 +35,7 @@ export const processSubsComRu = async ({ selections, cookie, processFiles }: Spi
   const extractUrl = response => response.request.res.responseUrl;
 
   const links = selections.map(link => LINK_PREPEND + link.attribs.href);
-  const test = links.slice(0, 2);
+  const test = links.slice(0, 30);
 
   const promises = test.map(url => downloadUrl(url, cookie));
   const downloads = await Promise.all(promises);
@@ -47,7 +48,13 @@ export const processSubsComRu = async ({ selections, cookie, processFiles }: Spi
 
   const writeFiles = downloads.map(requestToStream);
   const streams = R.zipWith(
-    (download, file) => processSingleFile(download.config.url, download.data, file),
+    async (download, file): Promise<PartialPayload> => {
+      const [downloadURL, savePath] = await processSingleFile(download.config.url, download.data, file);
+      return {
+        downloadUrl: downloadURL,
+        path: savePath
+      };
+    },
     downloads,
     writeFiles
   );

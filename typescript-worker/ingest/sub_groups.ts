@@ -1,6 +1,8 @@
 import * as R from "ramda";
 import { tally } from "../tools/utils";
 import { FileMatches, Grouped, MatchedFile } from "../typings/ass-parser";
+import { PartialPayload } from "../typings/db";
+import { Tallied } from "../typings/util";
 import { parseFileName } from "./file";
 
 const { freeze } = Object;
@@ -116,16 +118,29 @@ export const findBestSubGroup = (tallied: Tallied): string =>
  * suitable sub groups
  * @param matchingFiles
  */
-export const filterUsableSubs = (matchingFiles: string[]): string[] => {
+export const filterUsableSubs = (matchingFiles: PartialPayload[]): PartialPayload[] => {
   const isNotNil = item => !R.isNil(item);
 //
-  const subGroups = matchingFiles.map(parseFileName);
+  const matchedFiles = matchingFiles.map(file => {
+    const [subGroup, animeName, episode] = parseFileName(file.path);
+    return {
+      ...file,
+      subGroup,
+      animeName,
+      episode
+    };
+  });
 //
 //   const existingSubGroups = subGroups.filter(isNotNil);
 //   const singular = filterDuplicateEpisodes(existingSubGroups as MatchedFile[]);
 //
-  const tallied = tally(subGroups.map(a => a[0]));
+  const tallied = tally(matchedFiles.map(a => a.subGroup));
   const bestSubGroup = findBestSubGroup(tallied);
 //
-  return matchingFiles.filter(matching => parseFileName(matching).shift() === bestSubGroup);
+  return matchedFiles.filter(matching => matching.subGroup === bestSubGroup);
 };
+
+
+// export const isSubUsable = (matchingFile: string): boolean => {
+//
+// }

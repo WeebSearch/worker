@@ -56,7 +56,7 @@ interface ParsedDialogue {
   readonly start: number;
   readonly end: number;
   readonly text: string;
-  readonly name: string;
+  readonly name?: string;
   readonly order: number;
 }
 
@@ -74,5 +74,10 @@ type MatchedFile = [string, string, string];
 
 export declare const parse: (content: string) => AssFile;
 
-type FuseMatch<T> = [string, (T | undefined)];
+
+interface FuseResult<T> {
+  readonly item: (T | undefined);
+  readonly score: number;
+}
+type FuseMatch<T> = [string, FuseResult<T>?];
 

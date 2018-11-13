@@ -4,7 +4,8 @@ type User {
   email: String! @unique
   anilistName: String
   malName: String
-
+  profilePicture: String
+  description: String
   ## Generated
   id: ID! @unique
   hash: String!
@@ -48,7 +49,7 @@ type Archive {
 
 type Character {
   id: ID! @unique
-  anilistId: Int
+  anilistId: Int @unique
   rawName: String!
   name: String
   certainty: Int
@@ -98,7 +99,7 @@ type File {
   anime: Anime!
   archive: Archive
   linkUrl: String
-  fileName: String!
+  fileName: String! @unique
   episode: Episode!
   createdAt: DateTime!
   updatedAt: DateTime!

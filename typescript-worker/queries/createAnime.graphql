@@ -1,8 +1,9 @@
-mutation($rawName: String! $anilistId: Int! $malId: Int!) {
+mutation($rawName: String! $anilistId: Int! $malId: Int! $thumbnailUrl: String) {
   createAnime(data: {
     rawName: $rawName
     anilistId: $anilistId
     malId: $malId
+    thumbnailUrl: $thumbnailUrl
   }) {
     id
   }

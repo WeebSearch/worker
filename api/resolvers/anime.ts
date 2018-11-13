@@ -10,7 +10,7 @@ export const animeQuery = {
     info
   ) {
     // this
-    const dialogue = await ctx.db.query.animes(
+    return ctx.db.query.animes(
       {
         where: {
           OR: [
@@ -27,7 +27,6 @@ export const animeQuery = {
       },
       info
     );
-    return dialogue;
   },
   async anime(
     _,

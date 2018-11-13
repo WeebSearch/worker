@@ -21,15 +21,18 @@ export const extractAnimesFromResponse = (resp: AxiosResponse<MalHintSearchRespo
   return category.items;
 };
 
+export const extractValidAnime = (animes, rawName) => {
+  const fullMatch = animes.find(
+    anime => anime.name.toLowerCase() === rawName.toLowerCase()
+  );
+  return fullMatch || animes.shift();
+};
+
 export const searchMALIdByRawName = async (rawName: string): Promise<number | undefined> => {
   const response = await axios.get(malSearchUrl(rawName));
   const animes = extractAnimesFromResponse(response);
   // MAL Elasticsearch doesn't check full matches, so we check instead
-  const fullMatch = animes.find(
-    anime => anime.name.toLowerCase() === rawName.toLowerCase()
-  );
-
-  const target = fullMatch || animes.shift();
+  const target = extractValidAnime(animes, rawName);
   return target.id;
 };
 

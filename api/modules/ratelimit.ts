@@ -1,5 +1,5 @@
-import * as RateLimiter from 'express-rate-limit'
-import * as RedisStore from 'rate-limit-redis'
+import * as RateLimiter from "express-rate-limit";
+import * as RedisStore from "rate-limit-redis";
 import { cache } from "./cache";
 
 export const limitRedis = new RateLimiter({
@@ -9,10 +9,10 @@ export const limitRedis = new RateLimiter({
   handler: (req, res, next) => {
     const payload = {
       message: "You're sending requests too quickly."
-    }
-    res.status(429).send(JSON.stringify(payload))
+    };
+    res.status(429).send(JSON.stringify(payload));
   }
-})
+});
 
 export const checkLimited = (key: string): Promise<boolean> =>
   new Promise((resolve, reject) => {

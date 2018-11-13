@@ -3,7 +3,6 @@
 # import Episode from "generated/prisma.graphql"
 # import Dialogue from "generated/prisma.graphql"
 
-
 type LoginCredentials {
   email: String!
   password: String!
@@ -14,6 +13,7 @@ type Profile {
   email: String!
   anilistName: String
   malName: String
+  profilePicture: String
 }
 
 type AuthResponse {
