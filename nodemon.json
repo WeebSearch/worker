@@ -1,0 +1,9 @@
+{
+  "restartable": "rs",
+  "colours": true,
+  "ext": "ts,graphql,json,.env",
+  "exec": "tsc -p api & node ./api/dist/index.js",
+  "events": {
+    "restart": "echo \"Restarted due to $FILENAME\""
+  }
+}

@@ -6,9 +6,13 @@ export interface UserSession {
     userId?: string;
 }
 
+export interface Session extends Express.Session {
+  session: UserSession
+}
+
 export interface Context {
   db: Prisma;
-  request: any & Express.Session & UserSession;
+  request: Express.Request & Session;
 }
 
 export class AuthError extends Error {

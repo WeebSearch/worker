@@ -1,0 +1,8 @@
+query($fileName: String!) {
+  file(where: {
+    fileName: $fileName
+  }) {
+    id
+    updatedAt
+  }
+}

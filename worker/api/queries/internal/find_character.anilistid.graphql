@@ -1,5 +1,0 @@
-query($anilistId: Int!) {
-  characters(where: { anilistId: $anilistId }) {
-    id
-  }
-}

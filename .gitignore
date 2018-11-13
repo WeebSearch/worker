@@ -117,3 +117,11 @@ venv.bak/
 
 \.vscode/
 .idea/
+
+Foundation\.1\.0\.dll
+
+lsar\.exe
+
+unar\.exe
+/docs
+api/generated/*

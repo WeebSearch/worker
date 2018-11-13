@@ -1,9 +1,7 @@
-language: python
-python:
-  - "3.6"
+language: node.js
 # command to install dependencies
 install:
-  - pip install pipenv
-  - pipenv install --system
+  - npm install
+  - npm run build:worker
 script:
-  - python worker/index.py
+  - npm run lint

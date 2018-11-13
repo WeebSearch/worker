@@ -1,19 +1,29 @@
+import { DateTime } from "../generated/prisma";
+
 export interface JwtResponse {
-  token: string;
-  exp: number;
+  readonly token: string;
+  readonly exp: number;
 }
 
 export interface LoginCredentials {
-  email: string;
-  password: string;
+  readonly email: string;
+  readonly password: string;
 }
 
 export interface SignupCredentials extends LoginCredentials {
-  name: string;
+  readonly name: string;
 }
 
 export interface AuthResponse {
-  successful: boolean;
-  token?: string;
+  readonly profile?: {
+    readonly name: string;
+    readonly createdAt: DateTime;
+    readonly anilistName?: string;
+    readonly email: string;
+    readonly malName?: string;
+    readonly profilePicture?: string;
+  };
+  readonly successful: boolean;
+  readonly token?: string;
 }
 

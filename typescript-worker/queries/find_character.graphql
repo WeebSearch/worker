@@ -1,0 +1,7 @@
+query($anilistId) {
+  character(where: {
+    anilistId: $anilistId
+  }) {
+    id
+  }
+}

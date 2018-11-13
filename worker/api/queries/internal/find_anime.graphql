@@ -1,7 +1,0 @@
-query($rawName: String!) {
-  anime(where: {
-    rawName: $rawName
-  }) {
-    id
-  }
-}

@@ -6,3 +6,5 @@ hooks:
   post-deploy:
     - "graphql get-schema --project database"
     - "graphql codegen"
+
+secret: ${env:PRISMA_SECRET}

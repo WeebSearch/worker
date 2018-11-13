@@ -1,0 +1,9 @@
+mutation($where: CharacterWhereUniqueInput! $create: CharacterCreateInput! $update: CharacterUpdateInput!) {
+  upsertCharacter(
+    where: $where
+    update: $update
+    create: $create
+  ) {
+    id
+  }
+}
