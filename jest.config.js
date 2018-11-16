@@ -3,6 +3,5 @@ module.exports = {
     "typescript-worker/jest.worker.js",
     "api/jest.api.js"
   ],
-
 };
 

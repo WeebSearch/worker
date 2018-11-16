@@ -26,6 +26,8 @@ services:
   postgres:
     image: postgres
     container_name: "postgres"
+    ports:
+      - "5000:5432"
     restart: always
     environment:
       POSTGRES_USER: "prisma-client"
@@ -35,18 +37,17 @@ services:
   redis:
     image: redis:alpine
     container_name: "redis"
-  solr:
-    container_name: "solr"
-    image: solr
-    ports:
-      - "8983:8983"
-    volumes:
-      - core2:/opt/solr/server/solr/core2
-
-networks:
-  postgres:
-    driver: bridge
+#  solr:
+#    container_name: "solr"
+#    image: solr
+#    ports:
+#      - "8983:8983"
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    volumes:
+#      - core2:/opt/solr/server/solr/weebsearch
 
 volumes:
   postgres:
-  core2:
+#  core2:

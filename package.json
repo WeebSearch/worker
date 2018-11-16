@@ -12,6 +12,7 @@
 		"build": "rimraf dist && tsc",
 		"build:worker": "tsc -p typescript-worker",
 		"build:api": "tsc -p api",
+    "typedoc": "typedoc --out docs/ typescript-worker/",
 		"lint:worker": "tslint --project typescript-worker"
 	},
 	"dependencies": {
@@ -60,8 +61,6 @@
 		"@types/redis": "^2.8.6",
 		"dotenv-cli": "1.4.0",
 		"graphql-cli": "^2.17.0",
-		"gulp": "^3.9.1",
-		"gulp-typedoc": "^2.2.0",
 		"jest": "^23.6.0",
 		"nodemon": "1.18.4",
 		"npm-run-all": "4.1.3",
