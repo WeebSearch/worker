@@ -4,6 +4,7 @@ import gql from 'graphql-tag';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { random } from '../utils';
+import { LoaderService } from '../services/loader.service';
 
 interface Anime {
   id: string;
@@ -19,7 +20,8 @@ interface Anime {
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  public animes: Anime[];
+  public animes: Anime[] = [];
+  public search = 'Search';
   public missingThumbnailPlaceholders = [
     'shrug1.jpg',
     'shrug2.png',
@@ -31,10 +33,22 @@ export class HomeComponent implements OnInit {
   ].map(file => `assets/shrugs/${file}`);
 
   public placeholders: string[] = [];
+  public loader = this.loader.randomLoader()
 
   public randomThumbnailPlaceholder = () => random(this.missingThumbnailPlaceholders);
 
-  constructor(public apollo: Apollo, public router: Router) {
+  constructor(public apollo: Apollo, public router: Router, public loader: LoaderService) {
+    this.loadAnimes();
+  }
+
+  ngOnInit() {
+  }
+
+  animeLink = (id: string) => {
+    return `/anime/${id}`;
+  };
+
+  loadAnimes = (paginate: number = 0) => {
     this.apollo.query<{ animes: Anime[] }>({
       query: gql`
         query {
@@ -53,16 +67,10 @@ export class HomeComponent implements OnInit {
       `,
     }).pipe(map(res => res.data.animes)).subscribe(items => {
       // const unknownAnimes = items.filter(anime => !anime.thumbnailUrl).length;
+      console.log(items);
       this.animes = items.sort((a, b) => a.rawName > b.rawName ? -1 : 1);
       this.placeholders = this.animes.map(this.randomThumbnailPlaceholder);
     });
-  }
-
-  ngOnInit() {
-  }
-
-  animeLink = (id: string) => {
-    return `/anime/${id}`;
   }
 
 }

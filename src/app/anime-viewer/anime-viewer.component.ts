@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import { Router } from '@angular/router';
 import gql from 'graphql-tag';
-import {DEFAULT_COLORS, evaluateAnime, evaluateEpisode, random} from '../utils';
+import { DEFAULT_COLORS, evaluateAnime, evaluateEpisode, random } from '../utils';
 import { Anime, Character, Dialogue, Episode } from '../types';
-
+import { LoaderService } from '../services/loader.service';
 
 
 @Component({
@@ -12,8 +12,6 @@ import { Anime, Character, Dialogue, Episode } from '../types';
   templateUrl: './anime-viewer.component.html',
   styleUrls: ['./anime-viewer.component.scss']
 })
-
-
 export class AnimeViewerComponent implements OnInit {
 
   public loaders = Array(11).fill(0).map((_, i) => `assets/loaders/loader${i + 1}.gif`);
@@ -33,7 +31,7 @@ export class AnimeViewerComponent implements OnInit {
   loaderPlaying = false;
   loading: boolean;
 
-  constructor(public router: Router, public apollo: Apollo) {
+  constructor(public router: Router, public apollo: Apollo, public loader: LoaderService) {
     console.log(this.router.events.subscribe(console.log));
     this.loading = true;
     this.animeName = this.router.url.split('/').pop();
@@ -127,7 +125,7 @@ export class AnimeViewerComponent implements OnInit {
       this.episodes = res.data.episodes;
       if (this.episodes.length) {
         this.episode = this.episodes[0];
-        console.log(this.animeChecklist())
+        console.log(this.animeChecklist());
         this.previewEpisode(this.episode.episodeNumber);
       }
       this.queryEpisode(this.episodes[0].id);

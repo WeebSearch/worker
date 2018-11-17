@@ -4,19 +4,29 @@
   position: fixed;
   top: 0;
   width: 100%;
-  color: rgba(240, 255, 255, 0.2);
   opacity: 0.5;
   z-index: 2;
+  transition: opacity 150ms;
   &:hover {
     opacity: 1;
   }
 }
 
 .link {
+  color: rgba(207, 209, 255, 0.5);
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  //&:hover {
+  //  color: $alt-font;
+  //}
+  font-weight: bold;
+  font-size: 1rem;
+  //color: #cfdddd;
 }
+
 .navbar-nav {
-  color: rgba(240, 255, 255, 0.5);
   div > a > img {
     width: 40px;
     height: 40px;
@@ -25,20 +35,28 @@
     border-radius: 10px;
     margin-right: 5%;
   }
-  .links {
+}
+
+.navbar {
+  background-color: #223844;
+}
+
+.links {
+  display: flex;
+  flex-direction: row;
+  span {
     display: flex;
     flex-direction: row;
-    a {
-      &:hover {
-        color: $alt-font;
-      }
-      font-weight: bold;
-      font-size: 1rem;
-      display: flex;
-      color: #cfdddd;
-    }
   }
 }
+
+.main-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+}
+
 .vl {
   margin: auto 15px;
   border-right: 2px white;

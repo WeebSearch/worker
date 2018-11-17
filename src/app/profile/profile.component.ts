@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -6,9 +7,18 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
+  profile = {
+    avatar: '',
+    name: ''
+  };
+  links = [
+    { name: 'Edit Profile' },
+    { name: 'Favorites' }
+  ];
 
-  constructor() {
-
+  constructor(public auth: AuthService) {
+    this.profile.name = auth.profile.name;
+    this.profile.avatar = auth.profile.profilePicture || 'assets/default.jpg';
   }
 
   ngOnInit() {

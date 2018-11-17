@@ -43,7 +43,7 @@ export interface Profile {
   email: string;
   anilistName?: string;
   malName?: string;
-
+  profilePicture: string;
 }
 // export interface AnimeEvaluation {
 //

@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
-import { filter, map, tap } from 'rxjs/operators';
+
+type Activation = Observable<boolean> | Promise<boolean> | boolean;
 
 @Injectable({
   providedIn: 'root'
@@ -14,13 +15,12 @@ export class AuthGuard implements CanActivate {
   public canActivate = (
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot,
-    redirect: boolean = true): Observable<boolean> | Promise<boolean> | boolean => {
-    return this.auth.getProfile$().pipe(
-      map(response => Boolean(!response.errors)),
-      // filter((loggedIn) => Boolean(redirect) && loggedIn),
-      // tap(console.log),
-      // tap(() => this.router.navigate(['/login'])),
-    );
+    redirect: boolean = true): Activation => {
+    const authed = Boolean(this.auth.tokenVerify());
+    if (!authed) {
+      this.router.navigate(['/login']);
+    }
+    return authed;
   }
 }
 
@@ -28,23 +28,12 @@ export class AuthGuard implements CanActivate {
   providedIn: 'root'
 })
 export class ReverseAuthGuard implements CanActivate {
-  constructor(private router: Router, private auth: AuthGuard) {
+  constructor(private auth: AuthService) {
   }
 
   public canActivate = (
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot,
-  ) => {
-    return (this.auth.canActivate(next, state, false) as Observable<any>).pipe(
-      map(activate => !activate)
-    );
-    // return (this.auth.canActivate(next, state, false) as Observable<boolean>).pipe(
-    //   tap((x) => {
-    //     this.router.navigateByUrl('/')
-    //     console.log('====')
-    //     console.log(x)
-    //   }),
-    //   map(activate => !activate)
-    // );
-  }
+  ) => !Boolean(this.auth.tokenVerify())
+
 }

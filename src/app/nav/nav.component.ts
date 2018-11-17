@@ -1,9 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
-import { Apollo } from 'apollo-angular';
-import gql from 'graphql-tag';
-import {Router} from '@angular/router';
-import {Observable} from 'rxjs';
 
 interface Link {
   name: string;
@@ -14,7 +10,8 @@ interface Link {
   selector: 'app-nav',
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.scss'],
-  providers: [AuthService]
+  providers: [AuthService],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavComponent implements OnInit {
   public links: Link[] = [
@@ -26,12 +23,18 @@ export class NavComponent implements OnInit {
   ];
   public something: string;
 
-  constructor(public auth: AuthService, private router: Router) {
+  constructor(public auth: AuthService, private ref: ChangeDetectorRef) {
     // auth.getProfile$().subscribe(console.log);
+    console.log(this.auth.profile);
   }
 
 
   ngOnInit() {
+    // this.ref.detach()
+    this.auth.profileStream$.subscribe(profile => {
+      console.log('change detected')
+      this.ref.markForCheck()
+    });
   }
 
   highlight() {
@@ -44,7 +47,6 @@ export class NavComponent implements OnInit {
   }
 
   public _logout: () => void = () => {
-    console.log('logging out ')
     this.auth.logout();
   }
 }

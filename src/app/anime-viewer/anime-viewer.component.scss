@@ -71,14 +71,12 @@ $secondary-background: #20232a;
 }
 
 .episode-list {
-  margin: 2% auto;
-  display: flex;
-  flex-direction: row;
+  margin: 2% 5%;
 }
 
 
-.episode {
-  display: flex;
+.episode-button {
+  margin: 1px;
 }
 
 .episode-name {
@@ -89,7 +87,7 @@ $secondary-background: #20232a;
   width: 85%;
   display: grid;
   margin: 0 auto;
-  grid-gap: 3%;
+  column-gap: 1%;
   grid-template-columns: 8fr 1fr;
   > * {
     color: whitesmoke;
@@ -108,11 +106,6 @@ $secondary-background: #20232a;
   border-radius: 5px;
 }
 
-.loader {
-  margin: 0 auto;
-  max-height: 200px;
-  display: flex;
-}
 
 .dialogues {
   text-align: left;

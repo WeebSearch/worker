@@ -10,7 +10,7 @@ import { Apollo } from 'apollo-angular';
 import { HttpLink, HttpLinkModule } from 'apollo-angular-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { JwtHelperService } from '@auth0/angular-jwt';
+import { JwtHelperService, JwtModule } from '@auth0/angular-jwt';
 import { AnimeViewerComponent } from './anime-viewer/anime-viewer.component';
 import { ProfileComponent } from './profile/profile.component';
 import { Observable } from 'rxjs';
@@ -18,7 +18,9 @@ import { CookieService } from 'ngx-cookie-service';
 // import { AuthInterceptor } from './auth/auth.interceptor';
 import { onError } from 'apollo-link-error';
 import { AuthGuard, ReverseAuthGuard } from './auth/auth.guard';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AuthService } from './auth/auth.service';
+import { LoaderService } from './services/loader.service';
 
 class CustomPreloader implements PreloadingStrategy {
   preload(route: Route, preload: Function): Observable<any> {
@@ -28,6 +30,7 @@ class CustomPreloader implements PreloadingStrategy {
     return Observable.create(null);
   }
 }
+
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -62,27 +65,37 @@ const routes: Routes = [
     BrowserModule,
     RouterModule.forRoot(routes, { preloadingStrategy: CustomPreloader }),
     HttpLinkModule,
+    FormsModule,
     HttpClientModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: AuthService.tokenGetter,
+        whitelistedDomains: ['localhost:4200', 'localhost:4000'],
+      }
+    }),
     ReactiveFormsModule
   ],
-  providers: [Apollo, JwtHelperService, CustomPreloader, CookieService],
+  providers: [Apollo, JwtHelperService, CustomPreloader, CookieService, LoaderService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
   constructor(apollo: Apollo,
               httpLink: HttpLink,
               router: Router
-          ) {
+  ) {
 
     const errorLink = onError(({ graphQLErrors, networkError }) => {
       if (graphQLErrors) {
         graphQLErrors.forEach(({ message }) => {
           console.log(message);
+          console.log(message);
           // if (message === 'Not authorized') {
           //   return router.navigate(['/login']);
           // }
         });
-        if (networkError) { console.log(`[Network error]: ${networkError}`); }
+        if (networkError) {
+          console.log(`[Network error]: ${networkError}`);
+        }
       }
     });
     const link = httpLink.create({
