@@ -21,6 +21,7 @@ import { AuthGuard, ReverseAuthGuard } from './auth/auth.guard';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from './auth/auth.service';
 import { LoaderService } from './services/loader.service';
+import { AnimePreviewComponent } from './anime-preview/anime-preview.component';
 
 class CustomPreloader implements PreloadingStrategy {
   preload(route: Route, preload: Function): Observable<any> {
@@ -59,7 +60,8 @@ const routes: Routes = [
     PageNotFoundComponent,
     HomeComponent,
     AnimeViewerComponent,
-    ProfileComponent
+    ProfileComponent,
+    AnimePreviewComponent
   ],
   imports: [
     BrowserModule,

@@ -20,9 +20,10 @@
   position: relative;
 }
 
-.profile-header {
+.main {
   display: grid;
   grid-template-columns: 1fr 8fr 1fr;
+  grid-column-gap: 1%;
 }
 
 .overlay-wrap {

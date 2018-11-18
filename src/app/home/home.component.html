@@ -3,22 +3,17 @@
   <h1 class="title">WeebSearch</h1>
 </div>
 <div class="container-fluid" style="text-align: center">
-  <div class="search" [(ngModel)]="search"></div>
-  <img [src]="loader" class="loader" *ngIf="!animes.length">
+  <input class="search"
+         title="search"
+         placeholder="Search..."
+         [(ngModel)]="search"
+         (onkeydown)="onKeyDownSearch()">
+  <img [src]="loadingGif" class="loader" *ngIf="!animes.length">
   <div #searchgrid class="anime-container" *ngIf="animes.length">
-    <div class="anime-card" *ngFor="let anime of animes; index as i" [routerLink]="[animeLink(anime.rawName)]">
-      <div class="thumbnail-container">
-        <div class="title-cover">
-          <p class="title">{{anime.rawName}}</p>
-        </div>
-        <img class="anime-thumbnail" src="{{ anime.thumbnailUrl || placeholders[i] }}">
-        <!--src="assets/shrugs/shrug2.png"> -->
-      </div>
-      <div class="anime-footer">
-        <p><b>{{anime.characters.length}}</b> characters</p>
-        <p><b>{{anime.episodes.length}}</b> episodes</p>
-      </div>
-    </div>
+    <app-anime-preview *ngFor="let anime of animes; index as i"
+                       [routerLink]="[animeLink(anime.rawName)]"
+                       [name]="anime.rawName"
+                       [thumbnailUrl]="anime.thumbnailUrl">
+    </app-anime-preview>
   </div>
-  <!--<img style="margin: 0 auto; height: 500%" src="https://orig00.deviantart.net/808a/f/2017/038/4/a/satania_render_1_by_thegothamguardian-day7052.png"/>-->
 </div>

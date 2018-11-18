@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Apollo } from 'apollo-angular';
-import { Observable, ReplaySubject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import gql from 'graphql-tag';
 import { map, tap } from 'rxjs/operators';
 import { Profile } from '../types';
@@ -15,18 +15,14 @@ export class AuthService {
   authed?: boolean;
   loading: boolean;
   profile: Profile;
-  profileStream$ = new ReplaySubject<Profile>();
+  profileStream$ = new Subject<Profile>();
 
   constructor(public apollo: Apollo, private router: Router, private jwtHelper: JwtHelperService) {
     const token = AuthService.tokenGetter();
+    console.log('stream created')
     if (token) {
       this.profile = this.jwtHelper.decodeToken(token);
     }
-    // if (!AuthService.tokenGetter()) {
-    //   this.loading = false;
-    // } else {
-    //   this.authed = true;
-    // }
   }
 
   public static tokenGetter = () => localStorage.getItem('jwt_token');
@@ -38,6 +34,7 @@ export class AuthService {
   public handleToken = (token: string) => {
     localStorage.setItem('jwt_token', token);
     this.profile = this.jwtHelper.decodeToken(token);
+    console.log('handling token')
     this.profileStream$.next(this.profile);
   }
 

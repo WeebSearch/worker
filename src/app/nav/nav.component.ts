@@ -21,20 +21,18 @@ export class NavComponent implements OnInit {
     { name: 'Editor', link: '/editor' },
     { name: 'Login', link: '/login' }
   ];
-  public something: string;
-
   constructor(public auth: AuthService, private ref: ChangeDetectorRef) {
-    // auth.getProfile$().subscribe(console.log);
-    console.log(this.auth.profile);
+    console.log('subscribing');
+    this.auth.profileStream$.subscribe(profile => {
+      console.log('change detected')
+      console.log(profile)
+      this.ref.markForCheck()
+    });
   }
 
 
   ngOnInit() {
     // this.ref.detach()
-    this.auth.profileStream$.subscribe(profile => {
-      console.log('change detected')
-      this.ref.markForCheck()
-    });
   }
 
   highlight() {

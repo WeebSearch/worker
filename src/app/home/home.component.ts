@@ -21,7 +21,13 @@ interface Anime {
 })
 export class HomeComponent implements OnInit {
   public animes: Anime[] = [];
-  public search = 'Search';
+  private _search: string;
+  get search () { return this._search; }
+  set search (value) {
+    this.onKeyDownSearch();
+    this._search = value;
+  }
+
   public missingThumbnailPlaceholders = [
     'shrug1.jpg',
     'shrug2.png',
@@ -33,9 +39,8 @@ export class HomeComponent implements OnInit {
   ].map(file => `assets/shrugs/${file}`);
 
   public placeholders: string[] = [];
-  public loader = this.loader.randomLoader()
+  public loadingGif = this.loader.randomLoader();
 
-  public randomThumbnailPlaceholder = () => random(this.missingThumbnailPlaceholders);
 
   constructor(public apollo: Apollo, public router: Router, public loader: LoaderService) {
     this.loadAnimes();
@@ -44,10 +49,15 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
   }
 
+  onKeyDownSearch = () => {
+    console.log(this.search);
+  }
   animeLink = (id: string) => {
     return `/anime/${id}`;
-  };
+  }
+  requestAnimes = (search: string) => {
 
+  }
   loadAnimes = (paginate: number = 0) => {
     this.apollo.query<{ animes: Anime[] }>({
       query: gql`
@@ -66,10 +76,7 @@ export class HomeComponent implements OnInit {
         }
       `,
     }).pipe(map(res => res.data.animes)).subscribe(items => {
-      // const unknownAnimes = items.filter(anime => !anime.thumbnailUrl).length;
-      console.log(items);
       this.animes = items.sort((a, b) => a.rawName > b.rawName ? -1 : 1);
-      this.placeholders = this.animes.map(this.randomThumbnailPlaceholder);
     });
   }
 
