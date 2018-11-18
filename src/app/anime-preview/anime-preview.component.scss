@@ -1,10 +1,54 @@
+$incomplete-color: #2fff4b;
+$verified-color: #57ff74;
+
 .thumbnail-container {
   overflow: hidden;
+  max-width: 170px;
+  margin: 0 auto;
+  position: relative;
 }
 
 .anime-thumbnail {
   max-height: 250px;
   margin: auto -100px;
+}
+
+.border-incomplete {
+  border-top: 3px solid $incomplete-color;
+}
+
+.border-verified {
+  border-top: 3px solid $verified-color;
+}
+
+.icons {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin: 2%;
+  display: flex;
+  flex-direction: column;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  padding: 2%;
+  background-color: rgba(0, 0, 0, 0.6)
+}
+
+.icon-new {
+  color: cornflowerblue;
+}
+
+.icon-new {
+  color: #4765ed;
+}
+
+.icon-certificate {
+  color: #90ed78;
+}
+
+.icon-hot {
+  color: #ff2f69;
 }
 
 .title {
@@ -41,3 +85,16 @@
     margin-bottom: 0;
   }
 }
+
+.top-highlight {
+  background-color: red;
+  height: 1%;
+  top: 0;
+  width: 100%;
+  position: absolute;
+}
+
+.ribbon-container {
+  max-width: 170px;
+}
+

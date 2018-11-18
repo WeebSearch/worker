@@ -22,6 +22,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from './auth/auth.service';
 import { LoaderService } from './services/loader.service';
 import { AnimePreviewComponent } from './anime-preview/anime-preview.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 class CustomPreloader implements PreloadingStrategy {
   preload(route: Route, preload: Function): Observable<any> {
@@ -68,6 +69,7 @@ const routes: Routes = [
     RouterModule.forRoot(routes, { preloadingStrategy: CustomPreloader }),
     HttpLinkModule,
     FormsModule,
+    FontAwesomeModule,
     HttpClientModule,
     JwtModule.forRoot({
       config: {

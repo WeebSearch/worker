@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { random } from '../utils';
+import { faPlusCircle, faCertificate, faCheck, faFire } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-anime-preview',
@@ -10,6 +11,15 @@ export class AnimePreviewComponent {
   @Input() name: string;
   @Input() thumbnailUrl: string;
   @Input() badges: string[];
+  @Input() showBadges = true;
+  @Input() showLineDisplay = true;
+  @Input() growOnHover = true;
+
+  faPlusCircle = faPlusCircle;
+  faCertificate = faCertificate;
+  faCheck = faCheck;
+  faFire = faFire;
+
   public missingThumbnailPlaceholders = [
     'shrug1.jpg',
     'shrug2.png',
