@@ -19,6 +19,7 @@ export class ProfileComponent implements OnInit {
   constructor(public auth: AuthService) {
     this.profile.name = auth.profile.name;
     this.profile.avatar = auth.profile.profilePicture || 'assets/default.jpg';
+    console.log(this.auth.profile);
   }
 
   ngOnInit() {

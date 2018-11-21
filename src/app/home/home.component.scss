@@ -1,9 +1,15 @@
 @import '~src/app/vars';
 
+.body {
+  margin-top: $navbar-height * 2;
+}
+
 .header-wrapper {
   overflow: hidden;
   max-height: 400px;
-  margin-bottom: 2%;
+  height: 250px;
+  display: flex;
+  justify-content: center;
 }
 
 .home-header {
@@ -14,6 +20,9 @@
     from(rgba(0, 0, 0, 1)), to(rgba(0, 0, 0, 0)));
 }
 
+.top-banner {
+  max-height: 100%;
+}
 
 .search {
   text-align: center;
@@ -29,6 +38,11 @@
   color: white;
 }
 
+.anime-container-wrapper {
+  background-color: #1c1d20;
+  padding: 25px;
+}
+
 .anime-container {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -42,6 +56,7 @@
   }
   @media screen and (max-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
+    grid-gap: 0;
   }
   @media screen and (max-width: 500px) {
     grid-template-columns: 1fr;
@@ -64,18 +79,12 @@
 }
 
 .title {
-  position: relative;
   top: 5px;
   text-align: center;
-  width: 100%;
-  margin: 0 auto;
   padding: 0 40px;
   color: #ffffff;
-  text-shadow: 0.07em 0 black,
-  0 0.07em black,
-  -0.07em 0 black,
-  0 -0.07em black;
-  font-size: 1.1rem;
+  font-size: 5rem;
+  align-self: center;
 }
 
 @-webkit-keyframes grow {

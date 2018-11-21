@@ -39,6 +39,7 @@ export interface Evaluation {
 }
 
 export interface Profile {
+  description?: string;
   name: string;
   email: string;
   anilistName?: string;

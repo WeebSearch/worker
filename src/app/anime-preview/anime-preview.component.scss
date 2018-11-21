@@ -8,6 +8,11 @@ $verified-color: #57ff74;
   position: relative;
 }
 
+//.top {
+//  height: 100%;
+//  width: 100%;
+//}
+
 .anime-thumbnail {
   max-height: 250px;
   margin: auto -100px;
@@ -64,9 +69,9 @@ $verified-color: #57ff74;
   height: 100%;
   min-height: 100%;
   max-height: 500px;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   text-align: center;
-  grid-template-rows: 4fr 1fr;
   transition: all .2s ease-in-out;
   padding-bottom: 6%;
   &:hover {

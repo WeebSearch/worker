@@ -80,4 +80,14 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  dialogueCount = () => {
+    return this.apollo.query({
+      query: gql`
+        query {
+          
+        }
+      `
+    })
+  }
+
 }
