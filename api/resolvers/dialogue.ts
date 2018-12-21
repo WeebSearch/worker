@@ -6,6 +6,7 @@ interface DialoguesQueryInput {
   episodeName: string;
 }
 
+
 export const dialogueQuery = {
   async dialogues(
     _,

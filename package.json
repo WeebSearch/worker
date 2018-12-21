@@ -12,7 +12,7 @@
 		"build": "rimraf dist && tsc",
 		"build:worker": "tsc -p typescript-worker",
 		"build:api": "tsc -p api",
-    "typedoc": "typedoc --out docs/ typescript-worker/",
+		"typedoc": "typedoc --out docs/ typescript-worker/",
 		"lint:worker": "tslint --project typescript-worker"
 	},
 	"dependencies": {
@@ -34,12 +34,15 @@
 		"helmet": "^3.15.0",
 		"immutable": "^4.0.0-rc.12",
 		"jsonwebtoken": "8.3.0",
+		"pg": "^7.7.1",
 		"prisma": "^1.20.1",
 		"prisma-binding": "^2.1.6",
 		"ramda": "^0.25.0",
 		"rate-limit-redis": "^1.5.0",
 		"redis": "^2.8.0",
+		"reflect-metadata": "^0.1.12",
 		"robots-txt-parse": "^1.0.1",
+		"typeorm": "^0.2.9",
 		"unpack-all": "0.0.4",
 		"winston": "^3.1.0",
 		"winston-daily-rotate-file": "^3.5.1"
