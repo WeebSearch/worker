@@ -4,15 +4,20 @@
     "moduleResolution": "node",
     "module": "commonjs",
     "sourceMap": true,
-    "rootDirs": [
-      "api",
-      "typescript-worker"
-    ],
+    "rootDir": "src",
+    "baseUrl": "./src",
+    "paths": {
+      "@database/*": ["database/*"],
+      "@entities/*": ["database/entities/*"]
+//      "@api/*": ["api/*"],
+//      "@worker/*": ["worker/*"]
+    },
     "outDir": "dist",
     "lib": [
-      "esnext", "dom"
+      "esnext", "dom", "es2017"
     ],
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
   "exclude": [
     "node_modules"

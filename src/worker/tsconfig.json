@@ -1,0 +1,15 @@
+{
+  "extends": "../tsconfig",
+  "compilerOptions": {
+    "outDir": "../../dist",
+    "lib": ["es2017"],
+    "baseUrl": ".",
+    "paths": {
+      "@database/*": ["../database/*"],
+      "@entities/*": ["../database/entities/*"]
+    }
+  },
+  "typeRoots": [
+    "./typings/**/*.d.ts"
+  ]
+}
