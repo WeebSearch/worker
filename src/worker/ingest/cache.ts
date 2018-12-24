@@ -42,6 +42,7 @@ export const redisMemoize = (name: string, f: (..._: any[]) => any) => async (..
   if (cached) {
     // cached here is the right value here
     try {
+
       return JSON.parse(cached);
     } catch (e) {
       logger.error("Attempted to parse malformed JSON from redis");
@@ -50,7 +51,8 @@ export const redisMemoize = (name: string, f: (..._: any[]) => any) => async (..
     }
   }
   const result = await f(...args);
-  if (typeof result !== "object") {
+  if ([undefined, null].some(e => result === e)) {
+    // don't memoize undefined stuff
     return result;
   }
   await setAsync(argTarget, JSON.stringify(result));

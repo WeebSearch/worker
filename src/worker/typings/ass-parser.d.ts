@@ -79,5 +79,5 @@ interface FuseResult<T> {
   readonly item: (T | undefined);
   readonly score: number;
 }
-type FuseMatch<T> = [string, FuseResult<T>?];
+type FuseMatch<T> = [string, (FuseResult<T> | undefined)];
 

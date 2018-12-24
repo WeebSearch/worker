@@ -1,10 +1,16 @@
 import * as R from "ramda";
+import { sequelize } from "../../database";
+import Anime from "../../database/entities/anime";
+import Character from "../../database/entities/character";
+import CharacterDiscovery from "../../database/entities/character_discovery";
+import Dialogue from "../../database/entities/dialogue";
+import Download from "../../database/entities/download";
+import Episode from "../../database/entities/episode";
 import { searchMALIdByRawName } from "../resolvers/anime_resolver";
-import { fetchCharacters, matchCharacters } from "../resolvers/character_resolver";
+import { fetchCharacters, matchCharacters, safeJoinName } from "../resolvers/character_resolver";
 import { logger } from "../tools/logging";
-import { forEachAsync } from "../tools/utils";
-import { PartialPayload } from "../typings/db";
-import { createArchive, getAnime } from "./db";
+import { filterEmpty, forEachAsync } from "../tools/utils";
+import { CommitPayload, PartialPayload } from "../typings/db";
 import { extract, extractFileName, isArchive } from "./file";
 import { attachFileMetadata, filterUsableSubs } from "./sub_groups";
 import { getEpisodeLength, parseDialogues, processFilePathAsync } from "./subs";
@@ -48,6 +54,42 @@ export const extractAndSeparate = async (files: PartialPayload[]) => {
   return separateByName(populated);
 };
 
+export const processSortedSubs = (subs: NameSortedSubs) => Object.entries(subs).map(async ([anime, payloads]) => {
+  const validAnimes = filterUsableSubs(payloads);
+  const malId = await searchMALIdByRawName(anime);
+  const characters = await fetchCharacters(malId);
+  // sometimes malId exists but anilist does not have it
+  if (!characters) {
+    return Promise.resolve([]);
+  }
+
+  return Promise.all(validAnimes.map(async payload => {
+    const { path } = payload;
+    const anilistId = characters && characters.Media && characters.Media.id;
+    const thumbnailUrl = characters && characters.Media && characters.Media.coverImage.large;
+    const chars = characters && characters.Media && characters.Media.characters.nodes;
+
+    const fileName = extractFileName(path);
+    const dialogues = await processFilePathAsync(path);
+    const episodeLength = getEpisodeLength(dialogues);
+
+    const matchAnimeCharacters = R.curry(matchCharacters)(chars);
+    const parsedDialogue = parseDialogues(dialogues);
+    const matches = matchAnimeCharacters(Object.keys(parsedDialogue));
+
+    return {
+      ...payload,
+      anilistId,
+      malId,
+      thumbnailUrl,
+      fileName,
+      episodeLength,
+      dialogues: parsedDialogue,
+      characters: matches
+    };
+  }));
+});
+
 /**
  * Processing of the files after they are downloaded and sorted by the
  * downloader
@@ -56,60 +98,112 @@ export const extractAndSeparate = async (files: PartialPayload[]) => {
 export const processSavedFiles = async (files: PartialPayload[]): Promise<void> => {
   const separated = await extractAndSeparate(files);
   logger.info("Extracted all files");
+  const promises = processSortedSubs(separated);
 
-  const promises = Object.entries(separated).map(async ([anime, payloads]) => {
-    const validAnimes = filterUsableSubs(payloads);
-    const malId = await searchMALIdByRawName(anime);
-    const characters = await fetchCharacters(malId);
-    // sometimes malId exists but anilist does not have it
-    if (!characters) {
-      return Promise.resolve([]);
-    }
+  const animeGroups = await Promise.all(promises).then(filterEmpty) as CommitPayload[][];
+  return commitAnimes(animeGroups);
+};
 
-    return Promise.all(validAnimes.map(async payload => {
-      const { path } = payload;
-      const anilistId = characters && characters.Media.id;
-      const thumbnailUrl = characters && characters.Media.coverImage.large;
-      const chars = characters && characters.Media.characters.nodes;
+const commitEpisodeGroups = (files: CommitPayload[], { downloadId, animeId, transaction }) =>
+  Promise.all(files.map(async (file: CommitPayload) => {
+    const epValues = {
+      name: file.fileName,
+      episodeNumber: file.episode,
+      subGroup: file.subGroup
+    };
 
-      const fileName = extractFileName(path);
-      const dialogues = await processFilePathAsync(path);
-      const episodeLength = getEpisodeLength(dialogues);
-
-      const matchAnimeCharacters = R.curry(matchCharacters)(chars);
-      const parsedDialogue = parseDialogues(dialogues);
-      const matches = matchAnimeCharacters(Object.keys(parsedDialogue));
-
-      return {
-        ...payload,
-        anilistId,
-        malId,
-        thumbnailUrl,
-        fileName,
-        episodeLength,
-        dialogues: parsedDialogue,
-        characters: matches
-      };
-    }));
-  });
-  const finalPayloads = await Promise.all(promises).then(arrays => arrays.filter(Boolean));
-  console.log("payloaded");
-  await forEachAsync(async finalPayload => {
-    const [item] = finalPayload;
-    const resp = await getAnime(item.animeName);
-
-    // TODO: at some point our sources will not come from archives
-    const archive = item.archivePath && await createArchive({
-      linkUrl: item.downloadUrl,
-      fileName: extractFileName(item.archivePath)
+    const [episode, created] = await Episode.findOrCreate<Episode>({
+      where: epValues,
+      defaults: {
+        ...epValues,
+        length: file.episodeLength,
+        animeId,
+        downloadId
+      },
+      transaction
     });
 
-    const animeId = resp && resp.id;
-    // @ts-ignore (idk why it thinks archive is still undefined after checking)
-    const archiveId = archive && archive.createArchive.id;
-    // const archiveId = archive && archive.
-    //
-    // // @ts-ignore
-    // return commitFileEntity(finalPayload, animeId, archiveId);
-  }, finalPayloads);
-};
+    // no need to upsert characters for a duplicate episode
+    if (!created) {
+      return [];
+    }
+
+    return Promise.all(file.characters.map(async ([charName, char]) => {
+      const safeName = char && safeJoinName(char.item.name.first, char.item.name.last);
+      const anilistId = char && Number(char.item.id);
+      const [character] = anilistId && await Character.findOrCreate<Character>({
+        where: {
+          anilistId
+        },
+        defaults: {
+          anilistId,
+          name: safeName,
+          thumbnailUrl: char && char.item.image.medium
+        },
+        transaction
+      }) || [{ id: undefined }];
+
+      const discoveryValues = { episodeId: episode.id, name: charName };
+      const [discovery] = await CharacterDiscovery.findOrCreate<CharacterDiscovery>({
+        where: discoveryValues,
+        defaults: {
+          ...discoveryValues,
+          characterId: character.id,
+          certainty: char.score * 100
+        },
+        transaction
+      });
+      const dialogues = file.dialogues[charName].map(({ text, start, end, order, name }) => {
+        return {
+          text,
+          start,
+          end,
+          order,
+          animeId,
+          name,
+          episodeId: episode.id,
+          characterId: discovery.id
+        };
+      });
+      return Dialogue.bulkCreate<Dialogue>(dialogues, { transaction });
+    }));
+  }));
+
+
+/**
+ * If the anilist id is missing for animes that means
+ * we are going to end up with potentially multiple
+ * copies of the same anime which will have to be
+ * manually addressed at a later point
+ */
+const commitAnimes = async (files: CommitPayload[][]) =>
+  forEachAsync(async episodes => {
+    return sequelize.transaction(async transaction => {
+      const [item] = episodes;
+
+      const [anime] = await Anime.findOrCreate<Anime>({
+        where: { anilistId: item.anilistId },
+        defaults: {
+          rawName: item.animeName,
+          anilistId: item.anilistId,
+          thumbnailUrl: item.thumbnailUrl,
+          malId: item.malId
+        },
+        transaction
+      });
+
+      const downloadValues = { url: item.downloadUrl };
+      const [download] = item.downloadUrl && await Download.findOrCreate<Download>({
+        where: downloadValues,
+        defaults: downloadValues,
+        transaction
+      }) || [{ id: undefined }];
+
+
+      return commitEpisodeGroups(episodes, {
+        animeId: anime.id,
+        downloadId: download.id,
+        transaction
+      });
+    });
+  }, files);

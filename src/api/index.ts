@@ -1,7 +1,7 @@
 import * as dotenv from "dotenv";
 dotenv.config();
-import { sequelize } from "@database/index";
-import Anime from "@entities/anime";
+import { sequelize } from "../database";
+import Anime from "../database/entities/anime";
 import { GraphQLServer } from "graphql-yoga";
 import * as helmet from "helmet";
 import "reflect-metadata";

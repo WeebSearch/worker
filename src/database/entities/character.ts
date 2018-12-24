@@ -8,10 +8,7 @@ import {
   Table,
   UpdatedAt
 } from "sequelize-typescript";
-import Anime from "./anime";
-import AnimeAppearance from "./anime_appearance";
-import Dialogue from "./dialogue";
-import Episode from "./episode";
+import CharacterDiscovery from "./character_discovery";
 
 @Table({
   tableName: "characters",
@@ -22,7 +19,7 @@ export default class Character extends Model<Character> {
   public readonly id: number;
 
   @Column({ allowNull: false, unique: true })
-  public readonly anilistId: string;
+  public readonly anilistId: number;
 
   @Column
   public readonly name: string;
@@ -30,17 +27,8 @@ export default class Character extends Model<Character> {
   @Column
   public readonly thumbnailUrl: string;
 
-  @BelongsToMany(() => Anime, () => AnimeAppearance)
-  public readonly animes: Anime[];
-
-  @Column @ForeignKey(() => Episode)
-  public readonly episodeId: number;
-
-  @BelongsTo(() => Episode)
-  public readonly episode: Episode;
-
-  @HasMany(() => Dialogue)
-  public readonly dialogues: Dialogue[];
+  @HasMany(() => CharacterDiscovery)
+  public readonly characterDiscovery: CharacterDiscovery;
 
   @CreatedAt
   public readonly createdAt: Date;

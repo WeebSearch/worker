@@ -3,43 +3,34 @@ import {
   AutoIncrement,
   BelongsToMany,
   Column,
-  CreatedAt,
+  CreatedAt, HasMany,
   Model,
   PrimaryKey,
   Table,
   UpdatedAt
 } from "sequelize-typescript";
-import Character from "./character";
-import AnimeAppearance from "./anime_appearance";
+import CharacterDiscovery from "./character_discovery";
 
 /* tslint:disable */
 
 @Table({
   tableName: "animes",
-  underscoredAll: true,
-  underscored: true
 })
 export default class Anime extends Model<Anime> {
   @AutoIncrement @PrimaryKey @Column
   public readonly id: number;
 
-  @Column
+  @Column({ unique: true })
   public readonly rawName: string;
 
   @Column
-  public readonly anilistId: string;
+  public readonly anilistId: number;
 
   @Column
-  public readonly malId: string;
-
-  @Column
-  public readonly name: string;
+  public readonly malId: number;
 
   @Column
   public readonly thumbnailUrl: string;
-
-  @BelongsToMany(() => Character, () => AnimeAppearance)
-  public readonly characters: Character[];
 
   @CreatedAt
   public readonly createdAt: Date;

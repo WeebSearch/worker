@@ -1,7 +1,7 @@
 /* tslint:disable */
 import {
   AutoIncrement,
-  BelongsTo,
+  BelongsTo, BelongsToMany,
   Column,
   CreatedAt,
   ForeignKey, HasMany,
@@ -11,8 +11,9 @@ import {
 } from "sequelize-typescript";
 
 import Anime from "./anime";
-import Character from "./character";
 import Dialogue from "./dialogue";
+import CharacterDiscovery from "./character_discovery";
+import Download from "./download";
 
 @Table({
   tableName: "episodes",
@@ -22,7 +23,7 @@ export default class Episode extends Model<Episode> {
   @AutoIncrement @PrimaryKey @Column
   public readonly id: number;
 
-  @Column({ comment: 'not always numeric '})
+  @Column({ comment: 'not always numeric' })
   public readonly episodeNumber: string;
 
   @Column
@@ -43,14 +44,20 @@ export default class Episode extends Model<Episode> {
   @Column({ allowNull: false }) @ForeignKey(() => Anime)
   public readonly animeId: number;
 
-  @HasMany(() => Character)
-  public readonly characters: Character[];
+  @HasMany(() => CharacterDiscovery)
+  public readonly characters: CharacterDiscovery[];
 
   @HasMany(() => Dialogue)
   public readonly dialogues: Dialogue[];
 
   @BelongsTo(() => Anime)
   public readonly anime: Anime;
+
+  @Column @ForeignKey(() => Download)
+  public readonly downloadId?: number;
+
+  @BelongsTo(() => Download)
+  public readonly download?: Download;
 
   @CreatedAt
   public readonly createdAt: Date;

@@ -6,12 +6,6 @@
     "sourceMap": true,
     "rootDir": "src",
     "baseUrl": "./src",
-    "paths": {
-      "@database/*": ["database/*"],
-      "@entities/*": ["database/entities/*"]
-//      "@api/*": ["api/*"],
-//      "@worker/*": ["worker/*"]
-    },
     "outDir": "dist",
     "lib": [
       "esnext", "dom", "es2017"

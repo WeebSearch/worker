@@ -16,10 +16,11 @@ import { sequelize } from "../database/index";
 // import { getAnime } from "./ingest/db";
 
 (async () => {
-  // const x = await gatherDownloadedSubs();
-  // await processSavedFiles(R.flatten(x).map(a => ({ path: a })));
-  const s = await Anime.findOne({ where: { rawName: "123"}});
-  console.log(s.id);
+  await sequelize.drop().then(() => sequelize.sync());
+  const x = await gatherDownloadedSubs();
+  await processSavedFiles(R.flatten(x).map(a => ({ path: a })));
+  // const s = await Anime.findOne({ where: { rawName: "123" }});
+  // console.log(s.id);
   const q =1;
   // const x = y => y + 1;
   // liftP(x)(1).then(console.log);

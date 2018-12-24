@@ -3,11 +3,7 @@
   "compilerOptions": {
     "outDir": "../../dist",
     "lib": ["es2017"],
-    "baseUrl": ".",
-    "paths": {
-      "@database/*": ["../database/*"],
-      "@entities/*": ["../database/entities/*"]
-    }
+    "baseUrl": "."
   },
   "typeRoots": [
     "./typings/**/*.d.ts"

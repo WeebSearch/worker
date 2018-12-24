@@ -13,6 +13,8 @@ export const mapLower = R.map(R.toLower);
 
 export const liftP = <T, K>(f: (...inputArgs: [K]) => T) => (...args: [K]): Promise<T> => Promise.resolve(f(...args));
 
+export const filterEmpty: <T>(arr: T[]) => T[] = R.reject(R.isEmpty);
+
 export const forEachAsync = async <T>(callback: (item: T) => Promise<any>, iterable: T[]) => {
   // noinspection TsLint (ok there is literally no other way to do this)
   for (const item of iterable) {

@@ -4,9 +4,9 @@ import { searchMALIdByRawName } from "../resolvers/anime_resolver";
 import { fetchCharacters, matchCharacters } from "../resolvers/character_resolver";
 import { liftP } from "../tools/utils";
 import { AssDialogue, AssFile, NameSortedDialogues, ParsedDialogue } from "../typings/ass-parser";
-import { createAnime, createArchive } from "./db";
 import { extract, parseFileName, readSub } from "./file";
 import { filterUsableSubs } from "./sub_groups";
+import { redisMemoize } from "./cache";
 
 // declare const parse = (content: string): AssFile => parse(content);
 
@@ -44,7 +44,7 @@ export const isValidSpeaker = (dialogue: AssDialogue) =>
 export const filterText = (text: AssDialogue) => ({
   ...text,
   Text: {
-    combined: text.Text.combined.replace(CONTROL_CHARACTER_REGEX, ""),
+    combined: text.Text.combined.replace(CONTROL_CHARACTER_REGEX, "").replace(/ ?\\N/, ' '),
     ...(text.Text)
   }
 });
@@ -76,17 +76,16 @@ export const processFileContent = (content: string) => {
     const usable = filterUsableTexts(dialogues as AssDialogue[]);
     return R.map(filterText)(usable);
   } catch (e) {
-    console.log(e)
-    return []
+    return [];
   }
 };
 
 type PathToDialoguesAsync = (path: string) => Promise<AssDialogue[]>;
 
-export const processFilePathAsync = async (path: string) => {
+export const processFilePathAsync: PathToDialoguesAsync = redisMemoize("processedSub", async path => {
   const sub = await readSub(path);
   return liftP(processFileContent)(sub);
-};
+});
 
 export const createDialogue = (dialogue: AssDialogue, order): ParsedDialogue => ({
   name: dialogue.Name,
@@ -97,7 +96,7 @@ export const createDialogue = (dialogue: AssDialogue, order): ParsedDialogue => 
 });
 
 export const parseDialogues = (dialogues: AssDialogue[]): NameSortedDialogues =>
-  dialogues.reduce(
+   dialogues.reduce(
     (acc: [NameSortedDialogues, number], dialogue: AssDialogue) => {
       const [collector, order] = acc;
       const { Name } = dialogue;

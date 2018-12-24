@@ -7,7 +7,7 @@ import {
   PrimaryKey,
   Table, UpdatedAt
 } from "sequelize-typescript";
-import File from "./file";
+import Episode from "./episode";
 
 @Table({
   tableName: "downloads",
@@ -20,8 +20,8 @@ export default class Download extends Model<Download> {
   @Column({ allowNull: false })
   public readonly url: string;
 
-  @HasMany(() => File)
-  public readonly files: File[];
+  @HasMany(() => Episode)
+  public readonly files: Episode[];
 
   @CreatedAt
   public readonly createdAt: Date;

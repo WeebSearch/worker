@@ -17,14 +17,14 @@ export const fetchCharacters: (_: number | string) => Promise<AnilistCharacterRe
   redisMemoize("fetchCharacters", async (id: string | number) => {
     const q = await getQuery("fetchCharactersByMalId");
     return anilist.request(q, { id })
-      .catch(re => console.log(re));
+      .catch(() => ({}));
       // .catch(logDbError(`Error fetching character ${id} from anilist`));
   });
 
 export const matchCharacters =
   (pool: AnilistCharacter[], characterNames: string[]): Array<FuseMatch<AnilistCharacter>> => {
     const keys = ["name.first", "name.last", "name.native"];
-    const fuzzyNames = new Fuse(pool, {
+    const fuzzyNames = new Fuse(pool || [{}], {
       // @ts-ignore
       keys,
       includeScore: true,

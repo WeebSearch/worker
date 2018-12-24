@@ -1,7 +1,18 @@
-import { AutoIncrement, BelongsTo, Column, ForeignKey, Model, PrimaryKey, Table, Validate } from "sequelize-typescript";
-import Anime from "./anime";
+import {
+  AutoIncrement,
+  BelongsTo,
+  BelongsToMany,
+  Column,
+  ForeignKey, HasMany, HasOne,
+  Model,
+  PrimaryKey,
+  Table,
+  Validate
+} from "sequelize-typescript";
 import Character from "./character";
+import Dialogue from "./dialogue";
 import Episode from "./episode";
+import Anime from "./anime";
 
 @Table({
   tableName: "character_discoveries",
@@ -11,17 +22,20 @@ export default class CharacterDiscovery extends Model<CharacterDiscovery> {
   @AutoIncrement @PrimaryKey @Column
   public readonly id: number;
 
+  @Column({ allowNull: true }) @ForeignKey(() => Character)
+  public readonly characterId: number;
+
   @Column({ allowNull: false }) @ForeignKey(() => Episode)
   public readonly episodeId: number;
 
   @BelongsTo(() => Episode)
   public readonly episode: Episode;
 
-  @Column({ allowNull: true }) @ForeignKey(() => Character)
-  public readonly characterId: number;
-
   @BelongsTo(() => Character)
   public readonly character?: Character;
+
+  @HasMany(() => Dialogue)
+  public readonly dialogues: Dialogue[];
 
   @Column
   public readonly name: string;

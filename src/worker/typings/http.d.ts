@@ -23,6 +23,9 @@ export interface MalHintSearchResponse {
 }
 
 interface AnilistCharacter {
+  readonly image: {
+    readonly medium?: string;
+  };
   readonly id: string;
   readonly name: {
     readonly first?: string;

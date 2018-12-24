@@ -11,6 +11,7 @@ import {
 import Anime from "./anime";
 import Character from "./character";
 import Episode from "./episode";
+import CharacterDiscovery from "./character_discovery";
 
 
 @Table({
@@ -27,11 +28,11 @@ export default class Dialogue extends Model<Dialogue> {
   @Column({ allowNull: false })
   public readonly order: number;
 
-  @Column @ForeignKey(() => Character)
+  @Column @ForeignKey(() => CharacterDiscovery)
   public readonly characterId: number;
 
-  @BelongsTo(() => Character)
-  public readonly character: Character;
+  @BelongsTo(() => CharacterDiscovery)
+  public readonly character: CharacterDiscovery;
 
   @Column @ForeignKey(() => Anime)
   public readonly animeId: number;
