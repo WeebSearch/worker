@@ -1,28 +1,18 @@
 version: "3.5"
 services:
-#  prisma:
-#    image: prismagraphql/prisma:1.17
-#    container_name: "prisma"
-#    restart: always
-#    depends_on:
-#      - postgres
-#      - redis
-#    ports:
-#      - "4466:4466"
-#    environment:
-#      PRISMA_CONFIG: |
-#        port: 4466
-#        # uncomment the next line and provide the env var PRISMA_MANAGEMENT_API_SECRET=my-secret to activate cluster security
-#        # managementApiSecret: my-secret
-#        databases:
-#          default:
-#            connector: postgres
-#            host: postgres
-#            port: '5432'
-#            database: anime_index
-#            user: "prisma-client"
-#            password: "kawaii"
-#            migrations: true
+  graphql-engine:
+    image: hasura/graphql-engine:v1.0.0-alpha34
+    container_name: hasura
+    ports:
+      - "8080:8080"
+    depends_on:
+      - "postgres"
+    restart: always
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://hasura-client:123@postgres/anime_index
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
+      ## uncomment next line to set an access key
+      # HASURA_GRAPHQL_ACCESS_KEY: mysecretaccesskey
   postgres:
     image: postgres
     container_name: "postgres"
