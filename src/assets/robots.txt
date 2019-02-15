@@ -1,3 +1,0 @@
-# Crawling in my skin?
-
-User-agent: *
