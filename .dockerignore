@@ -1,0 +1,11 @@
+dist/
+docs/
+downloads/
+logs/
+node_modules/
+
+.travis.yml
+Dockerfile
+docker-compose.yml
+LICENSE
+README.md

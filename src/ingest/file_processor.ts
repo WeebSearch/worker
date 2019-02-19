@@ -1,11 +1,4 @@
 import * as R from "ramda";
-import { sequelize } from "../../database";
-import Anime from "../../database/entities/anime";
-import Character from "../../database/entities/character";
-import CharacterDiscovery from "../../database/entities/character_discovery";
-import Dialogue from "../../database/entities/dialogue";
-import Download from "../../database/entities/download";
-import Episode from "../../database/entities/episode";
 import { searchMALIdByRawName } from "../resolvers/anime_resolver";
 import { fetchCharacters, matchCharacters, safeJoinName } from "../resolvers/character_resolver";
 import { logger } from "../tools/logging";
