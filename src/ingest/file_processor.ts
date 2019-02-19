@@ -13,7 +13,7 @@ import { filterEmpty, forEachAsync } from "../tools/utils";
 import { CommitPayload, PartialPayload } from "../typings/db";
 import { extract, extractFileName, isArchive } from "./file";
 import { attachFileMetadata, filterUsableSubs } from "./sub_groups";
-import { getEpisodeLength, parseDialogues, processFilePathAsync } from "./subs";
+import { getEpisodeLength, hardCapDialogues, parseDialogues, processFilePathAsync } from "./subs";
 
 interface NameSortedSubs {
   readonly [k: string]: PartialPayload[];
@@ -50,12 +50,11 @@ export const extractAndSeparate = async (files: PartialPayload[]) => {
   // @ts-ignore
   const extractedFiles = await Promise.all(extractionsPromise);
   const concated = extractedFiles.reduce(R.concat, []);
-  const populated = concated.map(attachFileMetadata);
+  const populated = filterUsableSubs(concated.map(attachFileMetadata));
   return separateByName(populated);
 };
 
 export const processSortedSubs = (subs: NameSortedSubs) => Object.entries(subs).map(async ([anime, payloads]) => {
-  const validAnimes = filterUsableSubs(payloads);
   const malId = await searchMALIdByRawName(anime);
   const characters = await fetchCharacters(malId);
   // sometimes malId exists but anilist does not have it
@@ -63,7 +62,7 @@ export const processSortedSubs = (subs: NameSortedSubs) => Object.entries(subs).
     return Promise.resolve([]);
   }
 
-  return Promise.all(validAnimes.map(async payload => {
+  return Promise.all(payloads.map(async payload => {
     const { path } = payload;
     const anilistId = characters && characters.Media && characters.Media.id;
     const thumbnailUrl = characters && characters.Media && characters.Media.coverImage.large;
@@ -71,10 +70,11 @@ export const processSortedSubs = (subs: NameSortedSubs) => Object.entries(subs).
 
     const fileName = extractFileName(path);
     const dialogues = await processFilePathAsync(path);
-    const episodeLength = getEpisodeLength(dialogues);
+    const cappedDialogues = hardCapDialogues(dialogues);
+    const episodeLength = getEpisodeLength(cappedDialogues);
 
     const matchAnimeCharacters = R.curry(matchCharacters)(chars);
-    const parsedDialogue = parseDialogues(dialogues);
+    const parsedDialogue = parseDialogues(cappedDialogues);
     const matches = matchAnimeCharacters(Object.keys(parsedDialogue));
 
     return {
@@ -118,7 +118,8 @@ const commitEpisodeGroups = (files: CommitPayload[], { downloadId, animeId, tran
         ...epValues,
         length: file.episodeLength,
         animeId,
-        downloadId
+        downloadId,
+        episodeNumber: file.episode,
       },
       transaction
     });
@@ -149,7 +150,7 @@ const commitEpisodeGroups = (files: CommitPayload[], { downloadId, animeId, tran
         defaults: {
           ...discoveryValues,
           characterId: character.id,
-          certainty: char.score * 100
+          certainty: char && char.score * 100 || 0
         },
         transaction
       });

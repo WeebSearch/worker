@@ -3,7 +3,8 @@
   "compilerOptions": {
     "outDir": "../../dist",
     "lib": ["es2017"],
-    "baseUrl": "."
+    "baseUrl": ".",
+    "downlevelIteration": true
   },
   "typeRoots": [
     "./typings/**/*.d.ts"

@@ -9,6 +9,12 @@ export const tally = (items: string[]): Tallied => items.reduce((coll, item) => 
   [item]: (coll[item] || 0) + 1
 }), {});
 
+export const difference = <T>(one: T[], two: T[]) => {
+  const twoS = new Set(two);
+  return one.filter(item => !twoS.has(item));
+};
+
+
 export const mapLower = R.map(R.toLower);
 
 export const liftP = <T, K>(f: (...inputArgs: [K]) => T) => (...args: [K]): Promise<T> => Promise.resolve(f(...args));

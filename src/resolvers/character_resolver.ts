@@ -2,7 +2,7 @@ import * as Fuse from "fuse.js";
 import { GraphQLClient } from "graphql-request";
 import * as R from "ramda";
 import { redisMemoize } from "../ingest/cache";
-import { getQuery, logDbError } from "../queries";
+import { getQuery } from "../queries";
 import { FuseMatch, FuseResult } from "../typings/ass-parser";
 import { AnilistCharacter, AnilistCharacterResponse } from "../typings/http";
 
@@ -48,5 +48,5 @@ export const matchCharacter = <T>(pool: Fuse<AnilistCharacter>, characterName: s
   }];
 };
 
-export const safeJoinName = (first: string, last: string) =>
-  [first, last].join(" ").trim();
+export const safeJoinName = (...names: string[]) =>
+  names.join(" ").trim();

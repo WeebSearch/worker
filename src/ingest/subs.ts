@@ -1,11 +1,8 @@
 import { compile, parse } from "ass-compiler";
 import * as R from "ramda";
-import { searchMALIdByRawName } from "../resolvers/anime_resolver";
-import { fetchCharacters, matchCharacters } from "../resolvers/character_resolver";
 import { liftP } from "../tools/utils";
 import { AssDialogue, AssFile, NameSortedDialogues, ParsedDialogue } from "../typings/ass-parser";
-import { extract, parseFileName, readSub } from "./file";
-import { filterUsableSubs } from "./sub_groups";
+import { readSub } from "./file";
 import { redisMemoize } from "./cache";
 
 // declare const parse = (content: string): AssFile => parse(content);
@@ -18,6 +15,11 @@ import { redisMemoize } from "./cache";
  */
 export const CONTROL_CHARACTER_REGEX = /({\\.+?}|\\N)/g;
 export const DEFAULT_SPEAKER = "__UNKNOWN__";
+/**
+ * Hard cap for cutting off dialogues in an episode
+ * to prevent parsing millions of lines of trash subs
+ */
+export const DIALOGUE_HARD_CAP = 5000;
 
 export const INVALID_SPEAKERS = Object.freeze([
   "on-screen"
@@ -74,7 +76,8 @@ export const processFileContent = (content: string) => {
     const sub = parseSub(content);
     const dialogues = getSubDialogues(sub);
     const usable = filterUsableTexts(dialogues as AssDialogue[]);
-    return R.map(filterText)(usable);
+    const res = R.map(filterText)(usable);
+    return res;
   } catch (e) {
     return [];
   }
@@ -112,6 +115,10 @@ export const parseDialogues = (dialogues: AssDialogue[]): NameSortedDialogues =>
       return [obj, order + 1];
     }, [{}, 0])[0];
 
-export const getEpisodeLength = (dialogues: AssDialogue[]) =>
-  Math.max(...dialogues.map(dialogue => dialogue.End));
+export const getEpisodeLength = (dialogues: AssDialogue[]) => {
+  const result = Math.max(...dialogues.map(dialogue => dialogue.End));
+  return result !== -Infinity ? result : 0;
+}
+
+export const hardCapDialogues = <T>(dialogues: T[]) => dialogues.slice(0, DIALOGUE_HARD_CAP);
 

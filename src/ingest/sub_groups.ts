@@ -132,11 +132,18 @@ export const attachFileMetadata = (file: PartialPayload) => {
  * @param matchingFiles
  */
 export const filterUsableSubs = (matchingFiles: PartialPayload[]): PartialPayload[] => {
-  const tallied = tally(matchingFiles.map(a => a.subGroup));
-  const bestSubGroup = findBestSubGroup(tallied);
+  const groups = R.groupBy((file) => file.animeName, matchingFiles);
+  const items = Object.values(groups).map(group => {
+    const tallied = tally(group.map(g => g.subGroup));
+    const best = findBestSubGroup(tallied);
+    return { best, group };
+  });
 
-  const bests = matchingFiles.filter(matching => matching.subGroup === bestSubGroup);
-  return bests;
+  const s = items.reduce((acc, e) => {
+    const matching = e.group.filter(animes => animes.subGroup === e.best);
+    return [...acc, ...matching];
+  }, []);
+  return s;
 };
 
 

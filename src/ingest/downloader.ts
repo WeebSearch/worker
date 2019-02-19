@@ -1,12 +1,15 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as R from "ramda";
+import * as Sequelize from "sequelize";
 import { Readable } from "stream";
+import Download from "../../database/entities/download";
 import { request } from "../crawler/crawl";
+import { difference } from "../tools/utils";
 import { SavedFile } from "../typings/ass-parser";
+import { PartialPayload } from "../typings/db";
 import { SpiderCallback } from "../typings/spidey";
 import { processSavedFiles } from "./file_processor";
-import { CommitPayload, PartialPayload } from "../typings/db";
 
 const getWriteFile = (name: string) => fs.createWriteStream(
   path.join("downloads", name)
@@ -35,9 +38,13 @@ export const processSubsComRu = async ({ selections, cookie, processFiles }: Spi
   const extractUrl = response => response.request.res.responseUrl;
 
   const links = selections.map(link => LINK_PREPEND + link.attribs.href);
-  const test = links.slice(0, 30);
+  const dbRes = await Download.findAll({
+    where: { url: { [Sequelize.Op.or]: links } }
+  });
+  const existing = dbRes.map(res => res.url);
+  const newLinks = difference(links, existing);
 
-  const promises = test.map(url => downloadUrl(url, cookie));
+  const promises = newLinks.map(url => downloadUrl(url, cookie));
   const downloads = await Promise.all(promises);
 
   const requestToStream = R.pipe(
@@ -49,7 +56,9 @@ export const processSubsComRu = async ({ selections, cookie, processFiles }: Spi
   const writeFiles = downloads.map(requestToStream);
   const streams = R.zipWith(
     async (download, file): Promise<PartialPayload> => {
-      const [downloadURL, savePath] = await processSingleFile(download.config.url, download.data, file);
+      const [downloadURL, savePath] = await processSingleFile(
+        download.config.url, download.data, file
+      );
       return {
         downloadUrl: downloadURL,
         path: savePath

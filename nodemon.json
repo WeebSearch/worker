@@ -2,7 +2,8 @@
   "restartable": "rs",
   "colours": true,
   "ext": "ts,graphql,json,.env",
-  "exec": "tsc -p api & node ./api/dist/index.js",
+  "exec": "tsc --skipLibCheck && node ./dist/api/index.js",
+  "exclude": ["node_modules"],
   "events": {
     "restart": "echo \"Restarted due to $FILENAME\""
   }

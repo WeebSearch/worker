@@ -17,8 +17,9 @@ import { sequelize } from "../database/index";
 
 (async () => {
   await sequelize.drop().then(() => sequelize.sync());
-  const x = await gatherDownloadedSubs();
-  await processSavedFiles(R.flatten(x).map(a => ({ path: a })));
+  // const x = await gatherDownloadedSubs();
+  // await processSavedFiles(R.flatten(x).map(a => ({ path: a })));
+  await crawlSubsComRu();
   // const s = await Anime.findOne({ where: { rawName: "123" }});
   // console.log(s.id);
   const q =1;
